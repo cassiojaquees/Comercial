@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panorama comercial — Companhia de Impacto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  /* Paleta e tipografia extraídas do template institucional (pptx) da Companhia de Impacto */
+  :root{
+    --ink:#1C395C;        /* navy — cor dominante da marca */
+    --paper:#FAF9F5;      /* off-white quente — fundo padrão da marca */
+    --paper-2:#FFFFFF;
+    --text:#212020;
+    --text-2:#434343;
+    --growth:#7EBB55;     /* verde da marca — positivo / on-track */
+    --growth-bg:#EAF3E1;
+    --gap:#F78A3C;        /* laranja da marca — atenção / gap / risco */
+    --gap-bg:#FDEBDB;
+    --cyan:#41BED0;       /* acento terciário da marca */
+    --cyan-bg:#CFEFF3;
+    --line:#DFE1DA;
+    --muted:#6F7570;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--text);
+    font-family:'Poppins', sans-serif;
+    font-weight:300;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+  /* ===== Cover ===== */
+  .cover{
+    background:var(--paper);
+    color:var(--text);
+    padding:64px 0 56px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--gap);
+    margin-bottom:18px;
+  }
+  .cover h1{
+    font-weight:700;
+    font-size:36px;
+    line-height:1.2;
+    max-width:640px;
+    margin-bottom:14px;
+    color:var(--ink);
+  }
+  .cover p.sub{
+    font-weight:300;
+    color:var(--text-2);
+    font-size:15px;
+    max-width:520px;
+    margin-bottom:40px;
+  }
+  .headline-metric{
+    display:flex;
+    gap:48px;
+    flex-wrap:wrap;
+    border-top:1px solid var(--line);
+    padding-top:28px;
+  }
+  .hm-item .hm-label{
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  .hm-item .hm-value{
+    font-size:32px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .hm-item .hm-value small{
+    font-size:14px;
+    color:var(--muted);
+    font-weight:300;
+  }
+
+  /* ===== Sections ===== */
+  section{padding:52px 0; border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{display:flex; align-items:baseline; gap:14px; margin-bottom:28px;}
+  .section-num{
+    font-size:13px;
+    font-weight:600;
+    color:var(--gap);
+  }
+  .section-head h2{
+    font-weight:600;
+    font-size:22px;
+    color:var(--ink);
+  }
+  .section-note{color:var(--muted); font-weight:300; font-size:14px; margin:-16px 0 28px 0; max-width:560px;}
+
+  /* ===== Panorama cards ===== */
+  .panorama-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;}
+  .p-card{background:var(--paper-2); border:1px solid var(--line); padding:22px;}
+  .p-card h3{font-size:13px; font-weight:500; color:var(--muted); margin-bottom:16px;}
+  .p-card .realizado{font-size:24px; font-weight:700; color:var(--ink);}
+  .p-card .meta-line{font-size:13px; font-weight:300; color:var(--muted); margin:4px 0 14px;}
+  .bar-track{height:6px; background:#EDECE4; overflow:hidden; margin-bottom:10px;}
+  .bar-fill{height:100%; background:var(--growth);}
+  .p-card .falta{font-size:13px; font-weight:300;}
+  .p-card .falta .tag{
+    display:inline-block; font-size:12px; font-weight:500;
+    padding:2px 7px; background:var(--gap-bg); color:var(--gap); margin-left:6px;
+  }
+
+  /* ===== OKR donut ===== */
+  .okr-layout{display:flex; gap:44px; align-items:center; flex-wrap:wrap;}
+  .donut{width:180px; height:180px; border-radius:50%; flex-shrink:0;}
+  .okr-legend{flex:1; min-width:280px;}
+  .okr-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line);}
+  .okr-row:last-child{border-bottom:none;}
+  .okr-dot{width:10px; height:10px; flex-shrink:0; border-radius:2px;}
+  .okr-row .okr-name{flex:1; font-size:14px; font-weight:400;}
+  .okr-row .okr-pct{font-size:14px; font-weight:600; color:var(--ink);}
+  .okr-row .okr-val{font-size:12px; font-weight:300; color:var(--muted); width:110px; text-align:right;}
+
+  /* ===== Frentes ===== */
+  .frente-row{padding:16px 0; border-bottom:1px solid var(--line);}
+  .frente-row:last-child{border-bottom:none;}
+  .frente-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .frente-top .fn{font-size:14px; font-weight:500; color:var(--ink);}
+  .frente-top .fv{font-size:13px; font-weight:300; color:var(--muted);}
+  .frente-entrada{font-size:12px; font-weight:300; color:var(--muted); margin-top:6px;}
+  .frente-entrada b{color:var(--text); font-weight:600;}
+
+  /* ===== Pipeline / cobertura ===== */
+  .coverage-banner{
+    background:var(--ink); color:var(--paper); padding:26px 28px; margin-bottom:28px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  .coverage-banner .cb-label{font-size:13px; font-weight:300; color:#B9C6D6; max-width:360px;}
+  .coverage-banner .cb-value{font-size:28px; font-weight:700;}
+  .quarter-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px;}
+  .q-card{border:1px solid var(--line); background:var(--paper-2); padding:18px;}
+  .q-card .q-name{font-size:12px; font-weight:500; color:var(--muted); margin-bottom:8px;}
+  .q-card .q-val{font-size:19px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .q-card .q-conv{font-size:12px; font-weight:300; color:var(--muted);}
+
+  /* ===== Concentração ===== */
+  .conc-headline{font-size:14px; font-weight:300; color:var(--muted); margin-bottom:22px;}
+  .conc-headline b{color:var(--gap); font-weight:600;}
+  .conc-row{display:flex; align-items:center; gap:14px; padding:9px 0;}
+  .conc-row .cr-name{width:150px; font-size:13px; font-weight:400; flex-shrink:0;}
+  .conc-row .cr-bar-track{flex:1; height:20px; background:#EDECE4;}
+  .conc-row .cr-bar-fill{height:100%; background:var(--gap);}
+  .conc-row .cr-val{font-size:12px; font-weight:500; width:90px; text-align:right; flex-shrink:0;}
+
+  /* ===== 2027 ===== */
+  .future-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .future-card{background:var(--growth-bg); padding:22px; border-left:3px solid var(--growth);}
+  .future-card.pipeline{background:var(--gap-bg); border-left-color:var(--gap);}
+  .future-card h3{font-size:13px; font-weight:500; margin-bottom:10px; color:var(--text-2);}
+  .future-card .fc-val{font-size:25px; font-weight:700; color:var(--ink);}
+
+  /* ===== Mercado pendente ===== */
+  .pending-card{
+    border:1px dashed var(--line); padding:28px; text-align:left; color:var(--muted); font-weight:300;
+    background:repeating-linear-gradient(135deg, #FCFBF8 0px, #FCFBF8 10px, #F3F2EB 10px, #F3F2EB 20px);
+  }
+  .pending-card .pc-title{font-size:14px; font-weight:600; color:var(--ink); margin-bottom:8px;}
+  .pending-card .pc-schema{font-size:12px; font-weight:400; margin-top:12px; color:var(--muted);}
+
+  footer{padding:32px 0 60px; font-size:12px; font-weight:300; color:var(--muted);}
+  footer .fline{border-top:1px solid var(--line); padding-top:20px;}
+
+  @media (max-width:640px){
+    .panorama-grid{grid-template-columns:1fr;}
+    .future-grid{grid-template-columns:1fr;}
+    .cover h1{font-size:27px;}
+    .okr-layout{gap:24px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="wrap">
+    <div class="eyebrow">Companhia de Impacto — comercial</div>
+    <h1>Panorama de editais e contratos</h1>
+    <p class="sub">Leitura executiva da carteira comercial 2026–2027: meta, composição da receita, pipeline e concentração de risco.</p>
+    <div class="headline-metric" id="headline-metric"></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <div class="section-head"><span class="section-num">01</span><h2>Panorama executivo</h2></div>
+    <div class="panorama-grid" id="panorama-grid"></div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">02</span><h2>Composição da receita</h2></div>
+    <p class="section-note">De onde vem o realizado de 2026 — quanto é expansão de carteira existente e quanto é motor de crescimento novo.</p>
+    <div class="okr-layout">
+      <div class="donut" id="okr-donut"></div>
+      <div class="okr-legend" id="okr-legend"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">03</span><h2>Desempenho por frente de trabalho</h2></div>
+    <p class="section-note">Distribuição do realizado 2026 entre as áreas, com a entrada de 2027 já visível como indicador de continuidade. Meta por área ainda não existe na aba "Metas" — assim que for definida com o gestor comercial, este bloco passa a comparar realizado × meta por frente.</p>
+    <div id="frentes-list"></div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">04</span><h2>Pipeline e cobertura da meta</h2></div>
+    <div class="pending-card">
+      <div class="pc-title">Aguardando dados da aba "Detalhamento" (forecast comercial)</div>
+      <div>Assim que o forecast for enviado, este bloco passa a mostrar o pipeline ponderado pela probabilidade de conversão, por trimestre, comparado ao que falta para bater a meta de faturamento 2026 — a leitura de "temos negócio suficiente na rua pra fechar a meta?".</div>
+      <div class="pc-schema">campos previstos: lead · valor · ano · quarter · % conversão · frente de trabalho</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">05</span><h2>Concentração de carteira</h2></div>
+    <p class="conc-headline" id="conc-headline"></p>
+    <div id="conc-list"></div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">06</span><h2>Visão 2027</h2></div>
+    <div class="future-grid" id="future-grid"></div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">07</span><h2>Mercado e tipo de contrato</h2></div>
+    <div class="pending-card">
+      <div class="pc-title">Aguardando atualização da aba "Mercado" com os contratos de 2026</div>
+      <div>Assim que a aba estiver atualizada pelo gestor comercial, este bloco passa a mostrar a distribuição por tipo de mercado (governo/setor público, fundações/filantropia, setor privado, Sebrae) e por tipo de contrato (convencional, editais/termos de colaboração, parceria com o Global, SGF).</div>
+      <div class="pc-schema">campos previstos: tipo_mercado · tipo_contrato · valor</div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap fline">
+    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos" e "Metas" · blocos de Pipeline e Mercado aguardam envio das abas "Detalhamento" e "Mercado" · a versão final atualiza automaticamente toda semana.
+  </div>
+</footer>
+
+<script>
+// ==================================================================
+// DADOS — este bloco é o único ponto que a automação semanal substitui.
+// Estrutura pensada para mapear direto nas colunas das abas
+// "Resumo de projetos" e "Detalhamento".
+// ==================================================================
+const DATA = {
+  geradoEm: "09/07/2026",
+  // Meta de faturamento esperado 2026 é derivada: meta de contratos assinados 2026 / taxa de crescimento
+  panorama: {
+    faturamento2026: { label: "Faturamento esperado 2026", realizado: 17192712.87, meta: 26600000 },
+    contratos2026: { label: "Contratos assinados 2026", realizado: 11702658.90, meta: 7980000 },
+    entrada2027: { label: "Entrada 2027 já garantida", realizado: 3846222.00, meta: 34580000 }
+  },
+  okr: [
+    { label: "Up-sell ou cross-sell", valor: 6560969.78, color: "#1C395C" },
+    { label: "Fidelização", valor: 5174615.14, color: "#41BED0" },
+    { label: "Novos negócios", valor: 4691691.43, color: "#7EBB55" },
+    { label: "Impacta Mais", valor: 685436.52, color: "#F78A3C" },
+    { label: "Não classificado", valor: 80000.00, color: "#B8BDB4" }
+  ],
+  // Meta por Frente de Trabalho ainda não existe na aba "Metas" — mostrando distribuição relativa do realizado
+  frentes: [
+    { nome: "Salto - Geração de Renda", realizado: 4635532.37, entrada2027: 1635863.00 },
+    { nome: "Aceleração da Inovação", realizado: 4025789.90, entrada2027: 0 },
+    { nome: "Inovação em Governo", realizado: 3992391.70, entrada2027: 2210359.00 },
+    { nome: "Ecossistemas e Ativação de Hubs", realizado: 2467562.38, entrada2027: 0 },
+    { nome: "Projeto Personalizado", realizado: 1306000.00, entrada2027: 0 },
+    { nome: "Fórum Impacta Mais", realizado: 685436.52, entrada2027: 0 },
+    { nome: "Não classificado", realizado: 80000.00, entrada2027: 0 }
+  ],
+  concentracao: [
+    { parceiro: "Sebrae Nacional", valor: 3584833.05 },
+    { parceiro: "JP Morgan", valor: 1237894.74 },
+    { parceiro: "Novo Nordisk", valor: 1007226.76 },
+    { parceiro: "MDIC - ENAP", valor: 1001538.65 },
+    { parceiro: "Fundo Socioambiental Caixa", valor: 999414.78 }
+  ],
+  totalCarteira2026: 17192712.87,
+  visao2027: {
+    entradaGarantida: 3846222.00
+  }
+};
+
+// ==================================================================
+// RENDER
+// ==================================================================
+const fmt = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+const fmtCompact = v => (v/1000000).toLocaleString('pt-BR', {maximumFractionDigits: 1}) + 'M';
+const pct = (a,b) => Math.round((a/b)*100);
+
+document.getElementById('footer-date').textContent = DATA.geradoEm;
+
+// --- Headline (cover) ---
+const hm = document.getElementById('headline-metric');
+const fat = DATA.panorama.faturamento2026;
+const con = DATA.panorama.contratos2026;
+hm.innerHTML = `
+  <div class="hm-item">
+    <div class="hm-label">Faturamento 2026</div>
+    <div class="hm-value">${pct(fat.realizado, fat.meta)}%<small> da meta</small></div>
+  </div>
+  <div class="hm-item">
+    <div class="hm-label">Contratos assinados 2026</div>
+    <div class="hm-value">${pct(con.realizado, con.meta)}%<small> da meta</small></div>
+  </div>
+  <div class="hm-item">
+    <div class="hm-label">Falta p/ bater meta faturamento</div>
+    <div class="hm-value">${fmtCompact(fat.meta - fat.realizado)}<small> BRL</small></div>
+  </div>
+`;
+
+// --- Panorama cards ---
+const pg = document.getElementById('panorama-grid');
+Object.values(DATA.panorama).forEach(item => {
+  const p = pct(item.realizado, item.meta);
+  const falta = item.meta - item.realizado;
+  pg.innerHTML += `
+    <div class="p-card">
+      <h3>${item.label}</h3>
+      <div class="realizado">${fmt(item.realizado)}</div>
+      <div class="meta-line">Meta: ${fmt(item.meta)}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(p,100)}%"></div></div>
+      <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(falta)}</span></div>
+    </div>
+  `;
+});
+
+// --- OKR donut ---
+const okrTotal = DATA.okr.reduce((s,o)=>s+o.valor, 0);
+let acc = 0;
+const gradientStops = DATA.okr.map(o => {
+  const start = acc/okrTotal*360;
+  acc += o.valor;
+  const end = acc/okrTotal*360;
+  return `${o.color} ${start}deg ${end}deg`;
+}).join(', ');
+document.getElementById('okr-donut').style.background = `conic-gradient(${gradientStops})`;
+
+const legend = document.getElementById('okr-legend');
+DATA.okr.sort((a,b)=>b.valor-a.valor).forEach(o => {
+  legend.innerHTML += `
+    <div class="okr-row">
+      <div class="okr-dot" style="background:${o.color}"></div>
+      <div class="okr-name">${o.label}</div>
+      <div class="okr-pct">${Math.round(o.valor/okrTotal*100)}%</div>
+      <div class="okr-val">${fmt(o.valor)}</div>
+    </div>
+  `;
+});
+
+// --- Frentes (sem meta por área — barra relativa ao maior realizado) ---
+const fl = document.getElementById('frentes-list');
+const maxFrente = Math.max(...DATA.frentes.map(f => f.realizado));
+DATA.frentes.forEach(f => {
+  const p = Math.round((f.realizado/maxFrente)*100);
+  fl.innerHTML += `
+    <div class="frente-row">
+      <div class="frente-top">
+        <span class="fn">${f.nome}</span>
+        <span class="fv">${fmt(f.realizado)}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div>
+      <div class="frente-entrada">Entrada 2027 já visível: <b>${fmt(f.entrada2027)}</b></div>
+    </div>
+  `;
+});
+
+// --- Concentração ---
+const concTop = DATA.concentracao.reduce((s,c)=>s+c.valor, 0);
+const concPct = Math.round((concTop/DATA.totalCarteira2026)*100);
+document.getElementById('conc-headline').innerHTML =
+  `Os top ${DATA.concentracao.length} parceiros representam <b>${concPct}%</b> da carteira realizada em 2026.`;
+
+const maxConc = Math.max(...DATA.concentracao.map(c=>c.valor));
+const cl = document.getElementById('conc-list');
+DATA.concentracao.forEach(c => {
+  cl.innerHTML += `
+    <div class="conc-row">
+      <div class="cr-name">${c.parceiro}</div>
+      <div class="cr-bar-track"><div class="cr-bar-fill" style="width:${(c.valor/maxConc)*100}%"></div></div>
+      <div class="cr-val">${fmt(c.valor)}</div>
+    </div>
+  `;
+});
+
+// --- 2027 ---
+document.getElementById('future-grid').innerHTML = `
+  <div class="future-card">
+    <h3>Entrada 2027 já garantida</h3>
+    <div class="fc-val">${fmt(DATA.visao2027.entradaGarantida)}</div>
+  </div>
+  <div class="future-card pipeline">
+    <h3>Pipeline em construção para 2027</h3>
+    <div class="fc-val" style="font-size:15px; font-weight:400; color:var(--muted)">Aguardando forecast (aba Detalhamento)</div>
+  </div>
+`;
+</script>
+
+</body>
+</html>
