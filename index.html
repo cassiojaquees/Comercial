@@ -138,6 +138,15 @@
   .frente-top .fv{font-size:13px; font-weight:300; color:var(--muted);}
   .frente-entrada{font-size:12px; font-weight:300; color:var(--muted); margin-top:6px;}
   .frente-entrada b{color:var(--text); font-weight:600;}
+  .frente-eff{
+    font-size:11px; font-weight:500; padding:2px 7px; background:var(--cyan-bg); color:#185F6B;
+    border-radius:3px; display:inline-block; margin-left:8px;
+  }
+
+  /* ===== Sub-blocos reaproveitados (vintage / instituição) ===== */
+  .subblock{margin-top:32px; padding-top:24px; border-top:1px solid var(--line);}
+  .subhead{font-size:13px; font-weight:600; color:var(--ink); margin-bottom:6px;}
+  .subhead-note{font-size:12px; font-weight:300; color:var(--muted); margin-bottom:16px; max-width:520px;}
 
   /* ===== Concentração ===== */
   .conc-headline{font-size:14px; font-weight:300; color:var(--muted); margin-bottom:22px;}
@@ -220,6 +229,11 @@
         <svg class="donut-svg" id="okr-donut" width="200" height="200" viewBox="0 0 180 180"></svg>
         <div class="okr-legend" id="okr-legend"></div>
       </div>
+      <div class="subblock">
+        <div class="subhead">Por ano de assinatura</div>
+        <p class="subhead-note" id="vintage-note"></p>
+        <div id="vintage-list"></div>
+      </div>
     </section>
 
     <section id="sec-frentes">
@@ -241,6 +255,11 @@
       <div class="section-head"><span class="section-num">05</span><h2>Concentração de carteira</h2></div>
       <p class="conc-headline" id="conc-headline"></p>
       <div id="conc-list"></div>
+      <div class="subblock">
+        <div class="subhead">Por instituição (CNPJ)</div>
+        <p class="subhead-note" id="instituicao-note"></p>
+        <div id="instituicao-list"></div>
+      </div>
     </section>
 
     <section id="sec-2027">
@@ -285,13 +304,28 @@ const DATA = {
     { label: "Não classificado", valor: 80000.00, color: "#B8BDB4" }
   ],
   frentes: [
-    { nome: "Salto - Geração de Renda", realizado: 4635532.37, entrada2027: 1635863.00 },
-    { nome: "Aceleração da Inovação", realizado: 4025789.90, entrada2027: 0 },
-    { nome: "Inovação em Governo", realizado: 3992391.70, entrada2027: 2210359.00 },
-    { nome: "Ecossistemas e Ativação de Hubs", realizado: 2467562.38, entrada2027: 0 },
-    { nome: "Projeto Personalizado", realizado: 1306000.00, entrada2027: 0 },
-    { nome: "Fórum Impacta Mais", realizado: 685436.52, entrada2027: 0 },
-    { nome: "Não classificado", realizado: 80000.00, entrada2027: 0 }
+    { nome: "Salto - Geração de Renda", realizado: 4635532.37, entrada2027: 1635863.00, eficiencia: 95.8 },
+    { nome: "Aceleração da Inovação", realizado: 4025789.90, entrada2027: 0, eficiencia: 34.1 },
+    { nome: "Inovação em Governo", realizado: 3992391.70, entrada2027: 2210359.00, eficiencia: 77.0 },
+    { nome: "Ecossistemas e Ativação de Hubs", realizado: 2467562.38, entrada2027: 0, eficiencia: 38.5 },
+    { nome: "Projeto Personalizado", realizado: 1306000.00, entrada2027: 0, eficiencia: 100.0 },
+    { nome: "Fórum Impacta Mais", realizado: 685436.52, entrada2027: 0, eficiencia: 100.0 },
+    { nome: "Não classificado", realizado: 80000.00, entrada2027: 0, eficiencia: 100.0 }
+  ],
+  // Ano de assinatura do contrato que originou a receita realizada em 2026 (vintage da carteira)
+  vintage: [
+    { ano: "2026", valor: 11702658.90 },
+    { ano: "2025", valor: 2647710.07 },
+    { ano: "2024", valor: 2129285.99 },
+    { ano: "Sem data preenchida", valor: 713057.91 }
+  ],
+  // Entidade jurídica (CNPJ) a que o contrato está atrelado
+  instituicao: [
+    { nome: "Companhia", valor: 9412392.07 },
+    { nome: "Associação", valor: 4976629.58 },
+    { nome: "Não informado", valor: 1566499.12 },
+    { nome: "Brava", valor: 1213392.10 },
+    { nome: "Salto", valor: 23800.00 }
   ],
   concentracao: [
     { parceiro: "Sebrae Nacional", valor: 3584833.05 },
@@ -432,10 +466,27 @@ DATA.frentes.forEach(f => {
     <div class="frente-row">
       <div class="frente-top">
         <span class="fn">${f.nome}</span>
-        <span class="fv">${fmt(f.realizado)}</span>
+        <span class="fv">${fmt(f.realizado)} <span class="frente-eff">${f.eficiencia}% repassado</span></span>
       </div>
       <div class="bar-track"><div class="bar-fill" data-w="${p}"></div></div>
       <div class="frente-entrada">Entrada 2027 já visível: <b>${fmt(f.entrada2027)}</b></div>
+    </div>
+  `;
+});
+
+// --- Vintage da carteira (por ano de assinatura) ---
+const vintageTotal = DATA.vintage.reduce((s,v)=>s+v.valor, 0);
+const vintageMax = Math.max(...DATA.vintage.map(v=>v.valor));
+const pctNovo = Math.round(DATA.vintage[0].valor/vintageTotal*100);
+document.getElementById('vintage-note').innerHTML =
+  `${pctNovo}% do realizado 2026 vem de contratos assinados este ano; o restante vem de carteira de anos anteriores.`;
+const vl = document.getElementById('vintage-list');
+DATA.vintage.forEach(v => {
+  vl.innerHTML += `
+    <div class="conc-row">
+      <div class="cr-name">${v.ano}</div>
+      <div class="cr-bar-track"><div class="cr-bar-fill" data-w="${(v.valor/vintageMax)*100}"></div></div>
+      <div class="cr-val">${fmt(v.valor)}</div>
     </div>
   `;
 });
@@ -454,6 +505,22 @@ DATA.concentracao.forEach(c => {
       <div class="cr-name">${c.parceiro}</div>
       <div class="cr-bar-track"><div class="cr-bar-fill" data-w="${(c.valor/maxConc)*100}"></div></div>
       <div class="cr-val">${fmt(c.valor)}</div>
+    </div>
+  `;
+});
+
+// --- Por instituição (CNPJ) ---
+const instMax = Math.max(...DATA.instituicao.map(i=>i.valor));
+const instMaior = DATA.instituicao[0];
+document.getElementById('instituicao-note').innerHTML =
+  `A entidade "${instMaior.nome}" concentra ${Math.round(instMaior.valor/DATA.totalCarteira2026*100)}% do realizado 2026.`;
+const il = document.getElementById('instituicao-list');
+DATA.instituicao.forEach(i => {
+  il.innerHTML += `
+    <div class="conc-row">
+      <div class="cr-name">${i.nome}</div>
+      <div class="cr-bar-track"><div class="cr-bar-fill" data-w="${(i.valor/instMax)*100}"></div></div>
+      <div class="cr-val">${fmt(i.valor)}</div>
     </div>
   `;
 });
