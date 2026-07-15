@@ -166,6 +166,73 @@
   .future-card h3{font-size:13px; font-weight:500; margin-bottom:10px; color:var(--text-2);}
   .future-card .fc-val{font-size:25px; font-weight:700; color:var(--ink);}
 
+  /* ===== Pipeline / cobertura ===== */
+  .coverage-banner{
+    background:var(--ink); color:var(--paper); padding:26px 28px; margin-bottom:28px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  .coverage-banner .cb-label{font-size:13px; font-weight:300; color:#B9C6D6; max-width:380px;}
+  .coverage-banner .cb-value{font-size:28px; font-weight:700;}
+  .quarter-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px;}
+  .q-card{
+    border:1px solid var(--line); background:var(--paper-2); padding:18px;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .q-card:hover{transform:translateY(-3px); box-shadow:0 10px 28px rgba(28,57,92,0.09);}
+  .q-card .q-name{font-size:12px; font-weight:500; color:var(--muted); margin-bottom:8px;}
+  .q-card .q-val{font-size:19px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .q-card .q-conv{font-size:12px; font-weight:300; color:var(--muted);}
+
+  /* ===== Drill-down de leads ===== */
+  .drill-toggle{margin-top:8px;}
+  .drill-btn{
+    background:none; border:1px solid var(--line); color:var(--ink); font-family:'Poppins',sans-serif;
+    font-size:13px; font-weight:500; padding:9px 16px; cursor:pointer;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .drill-btn:hover{background:#F3F2EB; border-color:#C7CABF;}
+  .drill-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height .45s ease, opacity .3s ease, margin-top .3s ease;
+  }
+  .drill-panel.open{max-height:3000px; opacity:1; margin-top:20px;}
+  .drill-filters{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .filter-chip{
+    border:1px solid var(--line); background:var(--paper-2); color:var(--muted); font-family:'Poppins',sans-serif;
+    font-size:12px; font-weight:500; padding:6px 13px; cursor:pointer; border-radius:20px;
+    transition:all .15s ease;
+  }
+  .filter-chip:hover{border-color:#C7CABF;}
+  .filter-chip.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  .leads-table-wrap{overflow-x:auto;}
+  .lead-row{
+    display:grid; grid-template-columns: 1.8fr 1.2fr 0.7fr 1fr 0.8fr 1fr 0.9fr; gap:10px; align-items:center;
+    padding:10px 6px; border-bottom:1px solid var(--line); font-size:13px; border-radius:4px;
+    min-width:640px; transition:background .15s ease;
+  }
+  .lead-row:hover{background:#F3F2EB;}
+  .lead-row.head{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); border-bottom:2px solid var(--line);}
+  .lead-row.head:hover{background:none;}
+  .lead-name{font-weight:500; color:var(--ink);}
+  .lead-muted{color:var(--muted); font-weight:300;}
+  .temp-tag{display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; text-align:center;}
+  .temp-quente{background:var(--gap-bg); color:#B85A1E;}
+  .temp-morno{background:#F0EFE8; color:#6F7570;}
+  .temp-frio{background:var(--cyan-bg); color:#1D6672;}
+
+  /* ===== Seletor de ano + sub-blocos de pipeline ===== */
+  .year-toggle{display:flex; gap:8px; margin:24px 0 4px;}
+  .pipeline-subgrid{display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:20px;}
+  .temp-stats{display:flex; flex-direction:column; gap:8px;}
+  .temp-stat-row{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:11px 14px; background:var(--paper-2); border:1px solid var(--line);
+  }
+  .temp-stat-row .ts-label{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:400;}
+  .temp-stat-row .ts-count{font-size:11px; font-weight:300; color:var(--muted);}
+  .temp-stat-row .ts-val{font-size:14px; font-weight:600; color:var(--ink);}
+  @media (max-width:640px){.pipeline-subgrid{grid-template-columns:1fr;}}
+
   /* ===== Pending card ===== */
   .pending-card{
     border:1px dashed var(--line); padding:28px; text-align:left; color:var(--muted); font-weight:300;
@@ -244,10 +311,30 @@
 
     <section id="sec-pipeline">
       <div class="section-head"><span class="section-num">04</span><h2>Pipeline e cobertura da meta</h2></div>
-      <div class="pending-card">
-        <div class="pc-title">Aguardando dados da aba "Detalhamento" (forecast comercial)</div>
-        <div>Assim que o forecast for enviado, este bloco passa a mostrar o pipeline ponderado pela probabilidade de conversão, por trimestre, comparado ao que falta para bater a meta de faturamento 2026 — a leitura de "temos negócio suficiente na rua pra fechar a meta?".</div>
-        <div class="pc-schema">campos previstos: lead · valor · ano · quarter · % conversão · frente de trabalho</div>
+      <p class="section-note">Pipeline ponderado considera apenas a fatia de cada contrato que entra em 2026 — contratos plurianuais contam só a parcela do ano corrente, não o valor total do contrato pelo ciclo de vida inteiro.</p>
+      <div class="coverage-banner" id="coverage-banner"></div>
+      <div class="quarter-grid" id="quarter-grid"></div>
+
+      <div class="year-toggle" id="year-toggle"></div>
+      <div class="pipeline-subgrid">
+        <div>
+          <div class="subhead">Pipeline ponderado por frente</div>
+          <div id="frente-pipeline-list"></div>
+        </div>
+        <div>
+          <div class="subhead">Pipeline ponderado por temperatura</div>
+          <div class="temp-stats" id="temp-stats"></div>
+        </div>
+      </div>
+
+      <div class="drill-toggle">
+        <button class="drill-btn" id="drill-btn">Ver leads individuais ▾</button>
+      </div>
+      <div class="drill-panel" id="drill-panel">
+        <div class="drill-filters" id="drill-filters"></div>
+        <div class="leads-table-wrap">
+          <div id="leads-table"></div>
+        </div>
       </div>
     </section>
 
@@ -281,7 +368,7 @@
 
 <footer>
   <div class="wrap fline">
-    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos" e "Metas" · blocos de Pipeline e Mercado aguardam envio das abas "Detalhamento" e "Mercado" · a versão final atualiza automaticamente toda semana.
+    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos", "Metas" e "Detalhamento" · bloco de Mercado aguarda envio da aba "Mercado" · a versão final atualiza automaticamente toda semana.
   </div>
 </footer>
 
@@ -334,8 +421,52 @@ const DATA = {
     { parceiro: "MDIC - ENAP", valor: 1001538.65 },
     { parceiro: "Fundo Socioambiental Caixa", valor: 999414.78 }
   ],
+  // Leads individuais do forecast — ordenados por temperatura (quente primeiro) e ponderado
+  // Ponderado = Valor 2026 (fatia do ano) x conversão; para leads 2027 sem quebra por ano, usa o valor total do contrato
+  leads: [
+    { lead:"P4F", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:1820000.00, conversao:0.80, ponderado:728000.00, temperatura:"Quente" },
+    { lead:"Hydro 2", frente:"Ecossistemas", ano:"2026", periodo:"Q3/26", valor:6500000.00, conversao:0.70, ponderado:568750.00, temperatura:"Quente" },
+    { lead:"AdeSampa", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:1636000.00, conversao:0.50, ponderado:409000.00, temperatura:"Quente" },
+    { lead:"Sebrae + MDS", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:500000.00, conversao:0.80, ponderado:400000.00, temperatura:"Quente" },
+    { lead:"ANEEL", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:500000.00, conversao:0.70, ponderado:350000.00, temperatura:"Quente" },
+    { lead:"PARCOM", frente:"Estação Pública", ano:"2026", periodo:"Q3/26", valor:1000000.00, conversao:0.70, ponderado:350000.00, temperatura:"Quente" },
+    { lead:"CACB", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.75, ponderado:225000.00, temperatura:"Quente" },
+    { lead:"Einstein", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:700000.00, conversao:0.60, ponderado:210000.00, temperatura:"Quente" },
+    { lead:"Embaixada Reino Unido", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.60, ponderado:180000.00, temperatura:"Quente" },
+    { lead:"Raízen", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:250000.00, conversao:0.70, ponderado:175000.00, temperatura:"Quente" },
+    { lead:"Caravana Sebrae RS", frente:"Caravana", ano:"2026", periodo:"Q3/26", valor:200000.00, conversao:0.80, ponderado:160000.00, temperatura:"Quente" },
+    { lead:"Amazon", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:250000.00, conversao:0.60, ponderado:150000.00, temperatura:"Quente" },
+    { lead:"Sicredi MT", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:200000.00, conversao:0.60, ponderado:120000.00, temperatura:"Quente" },
+    { lead:"Petrobrás", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:6000000.00, conversao:0.50, ponderado:3000000.00, temperatura:"Morno" },
+    { lead:"BNDES", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:5000000.00, conversao:0.50, ponderado:2500000.00, temperatura:"Morno" },
+    { lead:"BRDE", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:1500000.00, conversao:0.50, ponderado:750000.00, temperatura:"Morno" },
+    { lead:"IKI", frente:"Aceleração", ano:"2027", periodo:"Q4/27", valor:1260000.00, conversao:0.50, ponderado:630000.00, temperatura:"Morno" },
+    { lead:"MDIC", frente:"Aceleração", ano:"2026", periodo:"Q4/26", valor:3500000.00, conversao:0.50, ponderado:350000.00, temperatura:"Morno" },
+    { lead:"Itaú", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:400000.00, conversao:0.60, ponderado:240000.00, temperatura:"Morno" },
+    { lead:"ADM", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:1500000.00, conversao:0.60, ponderado:225000.00, temperatura:"Morno" },
+    { lead:"Sabesp", frente:"Ecossistemas", ano:"2027", periodo:"Q4/27", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
+    { lead:"Serasa", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
+    { lead:"Volkswagem", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
+    { lead:"IHG", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:300000.00, conversao:0.50, ponderado:150000.00, temperatura:"Morno" },
+    { lead:"Fundação Volks", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.50, ponderado:150000.00, temperatura:"Morno" },
+    { lead:"Rumo", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:300000.00, conversao:0.40, ponderado:120000.00, temperatura:"Morno" },
+    { lead:"Sebrae MT", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:229856.20, conversao:0.50, ponderado:114928.10, temperatura:"Morno" },
+    { lead:"CEPF - Conservação da Biodiversidade do Cerrado", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:225000.00, conversao:0.50, ponderado:112500.00, temperatura:"Morno" },
+    { lead:"Catalisa Gov", frente:"Estação Pública", ano:"2026", periodo:"Q3/26", valor:140000.00, conversao:0.70, ponderado:98000.00, temperatura:"Morno" },
+    { lead:"Intelbras", frente:"Estação Pública", ano:"2026", periodo:"Q4/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" },
+    { lead:"Serpro", frente:"Estação Pública", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" }
+  ],
   totalCarteira2026: 17192712.87,
-  visao2027: { entradaGarantida: 3846222.00 }
+  // Pipeline ponderado = Valor 2026 (fatia do ano, não o valor total do contrato) x % de conversão
+  pipeline2026: [
+    { quarter: "Q3 2026", valor: 7360356.20, ponderado: 4708678.10, leads: 18 },
+    { quarter: "Q4 2026", valor: 2400000.00, ponderado: 1197500.00, leads: 6 }
+  ],
+  visao2027: {
+    entradaGarantida: 3846222.00,
+    // Contratos plurianuais que começam em 2027 ainda não têm quebra de valor por ano — usamos o valor total do contrato
+    pipeline2027: { valorTotal: 14860000.00, ponderado: 7400000.00, leads: 6 }
+  }
 };
 
 // ==================================================================
@@ -491,6 +622,145 @@ DATA.vintage.forEach(v => {
   `;
 });
 
+// --- Pipeline / cobertura ---
+const gap2026 = DATA.panorama.faturamento2026.meta - DATA.panorama.faturamento2026.realizado;
+const pipelinePonderado = DATA.pipeline2026.reduce((s,q)=> s + q.ponderado, 0);
+const cobertura = Math.round((pipelinePonderado/gap2026)*100);
+
+document.getElementById('coverage-banner').innerHTML = `
+  <div class="cb-label">Pipeline ponderado (fatia 2026) disponível frente ao que falta para bater a meta de faturamento 2026</div>
+  <div class="cb-value">${cobertura}% de cobertura</div>
+`;
+
+const qg = document.getElementById('quarter-grid');
+DATA.pipeline2026.forEach(q => {
+  const convMedia = Math.round((q.ponderado/q.valor)*100);
+  qg.innerHTML += `
+    <div class="q-card">
+      <div class="q-name">${q.quarter} · ${q.leads} leads</div>
+      <div class="q-val">${fmt(q.valor)}</div>
+      <div class="q-conv">Ponderado: ${fmt(q.ponderado)} · ${convMedia}% de conversão média</div>
+    </div>
+  `;
+});
+
+// --- Drill-down de leads individuais (filtro combinado: ano + temperatura) ---
+const tempClass = { "Quente":"temp-quente", "Morno":"temp-morno", "Frio":"temp-frio" };
+const tempOrder = ["Quente","Morno","Frio"];
+let yearFilter = 'Todos';
+let tempFilter = 'Todos';
+
+function leadsFiltered(){
+  return DATA.leads.filter(l =>
+    (yearFilter==='Todos' || l.ano===yearFilter) &&
+    (tempFilter==='Todos' || l.temperatura===tempFilter)
+  );
+}
+
+function renderLeadsTable(){
+  const list = leadsFiltered();
+  const table = document.getElementById('leads-table');
+  let html = `
+    <div class="lead-row head">
+      <div>Lead</div><div>Frente</div><div>Período</div><div>Valor</div><div>Conversão</div><div>Ponderado 2026</div><div>Temperatura</div>
+    </div>
+  `;
+  list.forEach(l => {
+    html += `
+      <div class="lead-row">
+        <div class="lead-name">${l.lead}</div>
+        <div class="lead-muted">${l.frente}</div>
+        <div class="lead-muted">${l.periodo}</div>
+        <div>${fmt(l.valor)}</div>
+        <div class="lead-muted">${Math.round(l.conversao*100)}%</div>
+        <div>${fmt(l.ponderado)}</div>
+        <div><span class="temp-tag ${tempClass[l.temperatura]}">${l.temperatura}</span></div>
+      </div>
+    `;
+  });
+  table.innerHTML = html;
+}
+
+function renderFrentePipeline(){
+  const list = yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter);
+  const byFrente = {};
+  list.forEach(l => { byFrente[l.frente] = (byFrente[l.frente]||0) + l.ponderado; });
+  const entries = Object.entries(byFrente).sort((a,b)=>b[1]-a[1]);
+  const max = Math.max(...entries.map(e=>e[1]), 1);
+  const el = document.getElementById('frente-pipeline-list');
+  el.innerHTML = '';
+  entries.forEach(([nome,valor]) => {
+    el.innerHTML += `
+      <div class="conc-row">
+        <div class="cr-name">${nome}</div>
+        <div class="cr-bar-track"><div class="cr-bar-fill" data-w="${(valor/max)*100}"></div></div>
+        <div class="cr-val">${fmt(valor)}</div>
+      </div>
+    `;
+  });
+  el.querySelectorAll('.cr-bar-fill').forEach(b => { b.style.width = b.dataset.w + '%'; });
+}
+
+function renderTempStats(){
+  const list = yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter);
+  const el = document.getElementById('temp-stats');
+  el.innerHTML = '';
+  tempOrder.forEach(t => {
+    const subset = list.filter(l=>l.temperatura===t);
+    const total = subset.reduce((s,l)=>s+l.ponderado,0);
+    el.innerHTML += `
+      <div class="temp-stat-row">
+        <div class="ts-label"><span class="temp-tag ${tempClass[t]}">${t}</span><span class="ts-count">${subset.length} leads</span></div>
+        <div class="ts-val">${fmt(total)}</div>
+      </div>
+    `;
+  });
+}
+
+function refreshPipelineViews(){
+  renderFrentePipeline();
+  renderTempStats();
+  renderLeadsTable();
+}
+
+const yearToggleEl = document.getElementById('year-toggle');
+['Todos','2026','2027'].forEach(y => {
+  const chip = document.createElement('button');
+  chip.className = 'filter-chip' + (y==='Todos' ? ' active' : '');
+  chip.textContent = y==='Todos' ? 'Todos os anos' : y;
+  chip.addEventListener('click', ()=>{
+    yearFilter = y;
+    yearToggleEl.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    refreshPipelineViews();
+  });
+  yearToggleEl.appendChild(chip);
+});
+
+const filtersEl = document.getElementById('drill-filters');
+const tempCounts = DATA.leads.reduce((acc,l)=>{ acc[l.temperatura]=(acc[l.temperatura]||0)+1; return acc; }, {});
+['Todos', ...tempOrder].forEach(f => {
+  const count = f==='Todos' ? DATA.leads.length : (tempCounts[f]||0);
+  const chip = document.createElement('button');
+  chip.className = 'filter-chip' + (f==='Todos' ? ' active' : '');
+  chip.textContent = `${f} (${count})`;
+  chip.addEventListener('click', ()=>{
+    tempFilter = f;
+    filtersEl.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    renderLeadsTable();
+  });
+  filtersEl.appendChild(chip);
+});
+
+refreshPipelineViews();
+
+document.getElementById('drill-btn').addEventListener('click', function(){
+  const panel = document.getElementById('drill-panel');
+  const open = panel.classList.toggle('open');
+  this.textContent = open ? 'Ocultar leads individuais ▴' : 'Ver leads individuais ▾';
+});
+
 // --- Concentração ---
 const concTop = DATA.concentracao.reduce((s,c)=>s+c.valor, 0);
 const concPct = Math.round((concTop/DATA.totalCarteira2026)*100);
@@ -533,7 +803,8 @@ document.getElementById('future-grid').innerHTML = `
   </div>
   <div class="future-card pipeline">
     <h3>Pipeline em construção para 2027</h3>
-    <div class="fc-val" style="font-size:15px; font-weight:400; color:var(--muted)">Aguardando forecast (aba Detalhamento)</div>
+    <div class="fc-val">${fmt(DATA.visao2027.pipeline2027.ponderado)}</div>
+    <div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;">Ponderado sobre ${DATA.visao2027.pipeline2027.leads} leads · valor total do contrato (sem quebra por ano em plurianuais)</div>
   </div>
 `;
 
