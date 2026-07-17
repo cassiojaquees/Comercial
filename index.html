@@ -59,6 +59,11 @@
   }
   .hm-item .hm-value{font-size:32px; font-weight:700; color:var(--ink);}
   .hm-item .hm-value small{font-size:14px; color:var(--muted); font-weight:300;}
+  .hm-detail{
+    display:inline-block; margin-top:8px; font-size:12px; font-weight:500; color:var(--gap);
+    text-decoration:none; border-bottom:1px solid transparent; transition:border-color .15s ease, opacity .15s ease;
+  }
+  .hm-detail:hover{border-color:var(--gap);}
 
   /* ===== Page layout (main column + sticky side nav) ===== */
   .page{
@@ -127,7 +132,7 @@
   .okr-dot{width:10px; height:10px; flex-shrink:0; border-radius:2px;}
   .okr-row .okr-name{flex:1; font-size:14px; font-weight:400;}
   .okr-row .okr-pct{font-size:14px; font-weight:600; color:var(--ink);}
-  .okr-row .okr-val{font-size:12px; font-weight:300; color:var(--muted); width:110px; text-align:right;}
+  .okr-row .okr-val{font-size:13px; font-weight:500; color:var(--text); width:110px; text-align:right;}
 
   /* ===== Frentes ===== */
   .frente-row{padding:16px 10px; border-bottom:1px solid var(--line); border-radius:4px; transition: background .15s ease;}
@@ -135,18 +140,24 @@
   .frente-row:last-child{border-bottom:none;}
   .frente-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
   .frente-top .fn{font-size:14px; font-weight:500; color:var(--ink);}
-  .frente-top .fv{font-size:13px; font-weight:300; color:var(--muted);}
+  .frente-top .fv{font-size:13px; font-weight:500; color:var(--text);}
   .frente-entrada{font-size:12px; font-weight:300; color:var(--muted); margin-top:6px;}
   .frente-entrada b{color:var(--text); font-weight:600;}
   .frente-eff{
     font-size:11px; font-weight:500; padding:2px 7px; background:var(--cyan-bg); color:#185F6B;
     border-radius:3px; display:inline-block; margin-left:8px;
   }
+  .meta-tag{
+    font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; display:inline-block;
+  }
+  .tag-superada{background:var(--growth-bg); color:#3F7A2C;}
+  .tag-emandamento{background:var(--gap-bg); color:#B85A1E;}
 
   /* ===== Sub-blocos reaproveitados (vintage / instituição) ===== */
   .subblock{margin-top:32px; padding-top:24px; border-top:1px solid var(--line);}
   .subhead{font-size:13px; font-weight:600; color:var(--ink); margin-bottom:6px;}
   .subhead-note{font-size:12px; font-weight:300; color:var(--muted); margin-bottom:16px; max-width:520px;}
+  .subhead-note b{color:var(--ink); font-weight:600;}
 
   /* ===== Concentração ===== */
   .conc-headline{font-size:14px; font-weight:300; color:var(--muted); margin-bottom:22px;}
@@ -173,6 +184,8 @@
   }
   .coverage-banner .cb-label{font-size:13px; font-weight:300; color:#B9C6D6; max-width:380px;}
   .coverage-banner .cb-value{font-size:28px; font-weight:700;}
+  .coverage-banner .cb-sub{font-size:13px; font-weight:300; color:#B9C6D6; margin-top:6px;}
+  .coverage-banner .cb-sub b{color:#FFFFFF; font-weight:600;}
   .quarter-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px;}
   .q-card{
     border:1px solid var(--line); background:var(--paper-2); padding:18px;
@@ -182,6 +195,8 @@
   .q-card .q-name{font-size:12px; font-weight:500; color:var(--muted); margin-bottom:8px;}
   .q-card .q-val{font-size:19px; font-weight:600; color:var(--ink); margin-bottom:4px;}
   .q-card .q-conv{font-size:12px; font-weight:300; color:var(--muted);}
+  .q-card .q-conv b{color:var(--ink); font-weight:600;}
+  .subhead-note b{color:var(--ink); font-weight:600;}
 
   /* ===== Drill-down de leads ===== */
   .drill-toggle{margin-top:8px;}
@@ -279,7 +294,6 @@
     <a href="#sec-pipeline" data-target="sec-pipeline">04 Pipeline e cobertura</a>
     <a href="#sec-concentracao" data-target="sec-concentracao">05 Concentração</a>
     <a href="#sec-2027" data-target="sec-2027">06 Visão 2027</a>
-    <a href="#sec-mercado" data-target="sec-mercado">07 Mercado</a>
   </nav>
 
   <div class="main">
@@ -301,11 +315,16 @@
         <p class="subhead-note" id="vintage-note"></p>
         <div id="vintage-list"></div>
       </div>
+      <div class="subblock">
+        <div class="subhead">Atingimento de metas por OKR</div>
+        <p class="subhead-note">KRs definidos pelo time comercial para cada motor de crescimento. Impacta Mais e itens não classificados ainda não têm meta de OKR própria.</p>
+        <div id="okr-metas-list"></div>
+      </div>
     </section>
 
     <section id="sec-frentes">
       <div class="section-head"><span class="section-num">03</span><h2>Desempenho por frente de trabalho</h2></div>
-      <p class="section-note">Distribuição do realizado 2026 entre as áreas, com a entrada de 2027 já visível como indicador de continuidade. Meta por área ainda não existe na aba "Metas" — assim que for definida com o gestor comercial, este bloco passa a comparar realizado × meta por frente.</p>
+      <p class="section-note">Realizado 2026 frente à meta de cada frente de trabalho, com a entrada de 2027 já visível como indicador de continuidade e a eficiência de repasse (quanto do valor do contrato vira receita da empresa).</p>
       <div id="frentes-list"></div>
     </section>
 
@@ -354,21 +373,14 @@
       <div class="future-grid" id="future-grid"></div>
     </section>
 
-    <section id="sec-mercado">
-      <div class="section-head"><span class="section-num">07</span><h2>Mercado e tipo de contrato</h2></div>
-      <div class="pending-card">
-        <div class="pc-title">Aguardando atualização da aba "Mercado" com os contratos de 2026</div>
-        <div>Assim que a aba estiver atualizada pelo gestor comercial, este bloco passa a mostrar a distribuição por tipo de mercado (governo/setor público, fundações/filantropia, setor privado, Sebrae) e por tipo de contrato (convencional, editais/termos de colaboração, parceria com o Global, SGF).</div>
-        <div class="pc-schema">campos previstos: tipo_mercado · tipo_contrato · valor</div>
-      </div>
-    </section>
+    <!-- Bloco 07 (Mercado e tipo de contrato) pausado a pedido do Rodolfo — retomar quando a aba "Mercado" estiver madura. Ver histórico do git para restaurar. -->
 
   </div>
 </div>
 
 <footer>
   <div class="wrap fline">
-    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos", "Metas" e "Detalhamento" · bloco de Mercado aguarda envio da aba "Mercado" · a versão final atualiza automaticamente toda semana.
+    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos", "Metas" e "Detalhamento" · bloco de Mercado pausado por enquanto · a versão final atualiza automaticamente toda semana.
   </div>
 </footer>
 
@@ -377,43 +389,50 @@
 // DADOS — este bloco é o único ponto que a automação semanal substitui.
 // ==================================================================
 const DATA = {
-  geradoEm: "09/07/2026",
+  geradoEm: "17/07/2026",
   panorama: {
-    faturamento2026: { label: "Faturamento esperado 2026", realizado: 17192712.87, meta: 26600000 },
-    contratos2026: { label: "Contratos assinados 2026", realizado: 11702658.90, meta: 7980000 },
+    faturamento2026: { label: "Faturamento esperado 2026", realizado: 19872912.32, meta: 26600000 },
+    contratos2026: { label: "Contratos assinados 2026", realizado: 18443543.92, meta: 7980000 },
     entrada2027: { label: "Entrada 2027 já garantida", realizado: 3846222.00, meta: 34580000 }
   },
   okr: [
     { label: "Up-sell ou cross-sell", valor: 6560969.78, color: "#1C395C" },
     { label: "Fidelização", valor: 5174615.14, color: "#41BED0" },
-    { label: "Novos negócios", valor: 4691691.43, color: "#7EBB55" },
-    { label: "Impacta Mais", valor: 685436.52, color: "#F78A3C" },
-    { label: "Não classificado", valor: 80000.00, color: "#B8BDB4" }
+    { label: "Novos negócios", valor: 4086381.43, color: "#7EBB55" },
+    { label: "Impacta Mais", valor: 3751945.97, color: "#F78A3C" },
+    { label: "Não classificado", valor: 299000.00, color: "#B8BDB4" }
+  ],
+  // Metas de KR por OKR (definidas pelo time comercial) — usadas no sub-bloco de atingimento em 02
+  okrMetas: [
+    { label: "Novos negócios", realizado: 4086381.43, meta: 3300000 },
+    { label: "Fidelização", realizado: 5174615.14, meta: 3700000 },
+    { label: "Up-sell ou cross-sell", realizado: 6560969.78, meta: 12000000 }
   ],
   frentes: [
-    { nome: "Salto - Geração de Renda", realizado: 4635532.37, entrada2027: 1635863.00, eficiencia: 95.8 },
-    { nome: "Aceleração da Inovação", realizado: 4025789.90, entrada2027: 0, eficiencia: 34.1 },
-    { nome: "Inovação em Governo", realizado: 3992391.70, entrada2027: 2210359.00, eficiencia: 77.0 },
-    { nome: "Ecossistemas e Ativação de Hubs", realizado: 2467562.38, entrada2027: 0, eficiencia: 38.5 },
-    { nome: "Projeto Personalizado", realizado: 1306000.00, entrada2027: 0, eficiencia: 100.0 },
-    { nome: "Fórum Impacta Mais", realizado: 685436.52, entrada2027: 0, eficiencia: 100.0 },
-    { nome: "Não classificado", realizado: 80000.00, entrada2027: 0, eficiencia: 100.0 }
+    { nome: "Aceleração da Inovação", realizado: 4094259.90, meta: 4500000, entrada2027: 0, eficiencia: 34.4 },
+    { nome: "Inovação em Governo", realizado: 3992391.70, meta: 6800000, entrada2027: 2210359.00, eficiencia: 77.0 },
+    { nome: "Fórum Impacta Mais", realizado: 3751945.97, meta: 4000000, entrada2027: 0, eficiencia: 100.0 },
+    { nome: "Salto - Geração de Renda", realizado: 3332481.39, meta: 5500000, entrada2027: 636448.00, eficiencia: 94.4 },
+    { nome: "Ecossistemas e Ativação de Hubs", realizado: 2697418.58, meta: 3500000, entrada2027: 0, eficiencia: 40.0 },
+    { nome: "Projeto Personalizado", realizado: 1705414.78, meta: 2300000, entrada2027: 999415.00, eficiencia: 100.0 },
+    { nome: "Não classificado", realizado: 299000.00, meta: null, entrada2027: 0, eficiencia: 100.0 }
   ],
   // Ano de assinatura do contrato que originou a receita realizada em 2026 (vintage da carteira)
   vintage: [
-    { ano: "2026", valor: 11702658.90 },
-    { ano: "2025", valor: 2647710.07 },
+    { ano: "2026", valor: 14482858.35 },
+    { ano: "2025", valor: 2547710.07 },
     { ano: "2024", valor: 2129285.99 },
     { ano: "Sem data preenchida", valor: 713057.91 }
   ],
   // Entidade jurídica (CNPJ) a que o contrato está atrelado
   instituicao: [
-    { nome: "Companhia", valor: 9412392.07 },
-    { nome: "Associação", valor: 4976629.58 },
-    { nome: "Não informado", valor: 1566499.12 },
+    { nome: "Companhia", valor: 13273750.64 },
+    { nome: "Associação", valor: 5052969.58 },
     { nome: "Brava", valor: 1213392.10 },
+    { nome: "Não informado", valor: 309000.00 },
     { nome: "Salto", valor: 23800.00 }
   ],
+  // "Impacta Mais" (evento de autoria própria, com múltiplos patrocinadores — não um cliente único) aparece como Parceiro no Resumo; excluído do ranking de concentração de clientes
   concentracao: [
     { parceiro: "Sebrae Nacional", valor: 3584833.05 },
     { parceiro: "JP Morgan", valor: 1237894.74 },
@@ -424,48 +443,48 @@ const DATA = {
   // Leads individuais do forecast — ordenados por temperatura (quente primeiro) e ponderado
   // Ponderado = Valor 2026 (fatia do ano) x conversão; para leads 2027 sem quebra por ano, usa o valor total do contrato
   leads: [
-    { lead:"P4F", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:1820000.00, conversao:0.80, ponderado:728000.00, temperatura:"Quente" },
-    { lead:"Hydro 2", frente:"Ecossistemas", ano:"2026", periodo:"Q3/26", valor:6500000.00, conversao:0.70, ponderado:568750.00, temperatura:"Quente" },
-    { lead:"AdeSampa", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:1636000.00, conversao:0.50, ponderado:409000.00, temperatura:"Quente" },
-    { lead:"Sebrae + MDS", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:500000.00, conversao:0.80, ponderado:400000.00, temperatura:"Quente" },
-    { lead:"ANEEL", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:500000.00, conversao:0.70, ponderado:350000.00, temperatura:"Quente" },
-    { lead:"PARCOM", frente:"Estação Pública", ano:"2026", periodo:"Q3/26", valor:1000000.00, conversao:0.70, ponderado:350000.00, temperatura:"Quente" },
-    { lead:"CACB", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.75, ponderado:225000.00, temperatura:"Quente" },
-    { lead:"Einstein", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:700000.00, conversao:0.60, ponderado:210000.00, temperatura:"Quente" },
-    { lead:"Embaixada Reino Unido", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.60, ponderado:180000.00, temperatura:"Quente" },
-    { lead:"Raízen", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:250000.00, conversao:0.70, ponderado:175000.00, temperatura:"Quente" },
-    { lead:"Caravana Sebrae RS", frente:"Caravana", ano:"2026", periodo:"Q3/26", valor:200000.00, conversao:0.80, ponderado:160000.00, temperatura:"Quente" },
-    { lead:"Amazon", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:250000.00, conversao:0.60, ponderado:150000.00, temperatura:"Quente" },
-    { lead:"Sicredi MT", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:200000.00, conversao:0.60, ponderado:120000.00, temperatura:"Quente" },
-    { lead:"Petrobrás", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:6000000.00, conversao:0.50, ponderado:3000000.00, temperatura:"Morno" },
-    { lead:"BNDES", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:5000000.00, conversao:0.50, ponderado:2500000.00, temperatura:"Morno" },
-    { lead:"BRDE", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:1500000.00, conversao:0.50, ponderado:750000.00, temperatura:"Morno" },
-    { lead:"IKI", frente:"Aceleração", ano:"2027", periodo:"Q4/27", valor:1260000.00, conversao:0.50, ponderado:630000.00, temperatura:"Morno" },
-    { lead:"MDIC", frente:"Aceleração", ano:"2026", periodo:"Q4/26", valor:3500000.00, conversao:0.50, ponderado:350000.00, temperatura:"Morno" },
-    { lead:"Itaú", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:400000.00, conversao:0.60, ponderado:240000.00, temperatura:"Morno" },
-    { lead:"ADM", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:1500000.00, conversao:0.60, ponderado:225000.00, temperatura:"Morno" },
-    { lead:"Sabesp", frente:"Ecossistemas", ano:"2027", periodo:"Q4/27", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
-    { lead:"Serasa", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
-    { lead:"Volkswagem", frente:"Aceleração", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
-    { lead:"IHG", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:300000.00, conversao:0.50, ponderado:150000.00, temperatura:"Morno" },
-    { lead:"Fundação Volks", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.50, ponderado:150000.00, temperatura:"Morno" },
-    { lead:"Rumo", frente:"Salto", ano:"2027", periodo:"Q4/27", valor:300000.00, conversao:0.40, ponderado:120000.00, temperatura:"Morno" },
-    { lead:"Sebrae MT", frente:"Salto", ano:"2026", periodo:"Q3/26", valor:229856.20, conversao:0.50, ponderado:114928.10, temperatura:"Morno" },
-    { lead:"CEPF - Conservação da Biodiversidade do Cerrado", frente:"Salto", ano:"2026", periodo:"Q4/26", valor:225000.00, conversao:0.50, ponderado:112500.00, temperatura:"Morno" },
-    { lead:"Catalisa Gov", frente:"Estação Pública", ano:"2026", periodo:"Q3/26", valor:140000.00, conversao:0.70, ponderado:98000.00, temperatura:"Morno" },
-    { lead:"Intelbras", frente:"Estação Pública", ano:"2026", periodo:"Q4/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" },
-    { lead:"Serpro", frente:"Estação Pública", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" }
+    { lead:"P4F", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:1820000.00, conversao:0.80, ponderado:728000.00, temperatura:"Quente" },
+    { lead:"Hydro 2", frente:"Ecossistemas e Ativação de Hubs", ano:"2026", periodo:"Q3/26", valor:6500000.00, conversao:0.70, ponderado:568750.00, temperatura:"Quente" },
+    { lead:"AdeSampa", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:1636000.00, conversao:0.50, ponderado:409000.00, temperatura:"Quente" },
+    { lead:"Sebrae + MDS", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:500000.00, conversao:0.80, ponderado:400000.00, temperatura:"Quente" },
+    { lead:"ANEEL", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:500000.00, conversao:0.70, ponderado:350000.00, temperatura:"Quente" },
+    { lead:"PARCOM", frente:"Inovação em Governo", ano:"2026", periodo:"Q3/26", valor:1000000.00, conversao:0.70, ponderado:350000.00, temperatura:"Quente" },
+    { lead:"CACB", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.75, ponderado:225000.00, temperatura:"Quente" },
+    { lead:"Einstein", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:700000.00, conversao:0.60, ponderado:210000.00, temperatura:"Quente" },
+    { lead:"Embaixada Reino Unido", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.60, ponderado:180000.00, temperatura:"Quente" },
+    { lead:"Raízen", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:220000.00, conversao:0.70, ponderado:154000.00, temperatura:"Quente" },
+    { lead:"Amazon", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:250000.00, conversao:0.60, ponderado:150000.00, temperatura:"Quente" },
+    { lead:"Caravana Sebrae RS", frente:"Ecossistemas e Ativação de Hubs", ano:"2026", periodo:"Q3/26", valor:200000.00, conversao:0.80, ponderado:160000.00, temperatura:"Quente" },
+    { lead:"Sicredi MT", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:200000.00, conversao:0.60, ponderado:120000.00, temperatura:"Quente" },
+    { lead:"Petrobrás", frente:"Salto - Geração de Renda", ano:"2027", periodo:"Q4/27", valor:6000000.00, conversao:0.50, ponderado:3000000.00, temperatura:"Morno" },
+    { lead:"BNDES", frente:"Salto - Geração de Renda", ano:"2027", periodo:"Q4/27", valor:5000000.00, conversao:0.50, ponderado:2500000.00, temperatura:"Morno" },
+    { lead:"BRDE", frente:"Salto - Geração de Renda", ano:"2027", periodo:"Q4/27", valor:1500000.00, conversao:0.50, ponderado:750000.00, temperatura:"Morno" },
+    { lead:"IKI", frente:"Aceleração da Inovação", ano:"2027", periodo:"Q4/27", valor:1260000.00, conversao:0.50, ponderado:630000.00, temperatura:"Morno" },
+    { lead:"MDIC", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q4/26", valor:3500000.00, conversao:0.50, ponderado:350000.00, temperatura:"Morno" },
+    { lead:"Itaú", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q4/26", valor:400000.00, conversao:0.60, ponderado:240000.00, temperatura:"Morno" },
+    { lead:"ADM", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q4/26", valor:1500000.00, conversao:0.60, ponderado:225000.00, temperatura:"Morno" },
+    { lead:"Sabesp", frente:"Ecossistemas e Ativação de Hubs", ano:"2027", periodo:"Q4/27", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
+    { lead:"Serasa", frente:"Salto - Geração de Renda", ano:"2027", periodo:"Q4/27", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
+    { lead:"Volkswagem", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.50, ponderado:200000.00, temperatura:"Morno" },
+    { lead:"IHG", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q4/26", valor:300000.00, conversao:0.50, ponderado:150000.00, temperatura:"Morno" },
+    { lead:"Fundação Volks", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:300000.00, conversao:0.50, ponderado:150000.00, temperatura:"Morno" },
+    { lead:"Rumo", frente:"Salto - Geração de Renda", ano:"2027", periodo:"Q4/27", valor:300000.00, conversao:0.40, ponderado:120000.00, temperatura:"Morno" },
+    { lead:"Sebrae MT", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:229856.20, conversao:0.50, ponderado:114928.10, temperatura:"Morno" },
+    { lead:"CEPF - Conservação da Biodiversidade do Cerrado", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q4/26", valor:225000.00, conversao:0.50, ponderado:112500.00, temperatura:"Morno" },
+    { lead:"Catalisa Gov", frente:"Inovação em Governo", ano:"2026", periodo:"Q3/26", valor:140000.00, conversao:0.70, ponderado:98000.00, temperatura:"Morno" },
+    { lead:"Intelbras", frente:"Inovação em Governo", ano:"2026", periodo:"Q4/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" },
+    { lead:"Serpro", frente:"Inovação em Governo", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" }
   ],
-  totalCarteira2026: 17192712.87,
+  totalCarteira2026: 19872912.32,
   // Pipeline ponderado = Valor 2026 (fatia do ano, não o valor total do contrato) x % de conversão
   pipeline2026: [
-    { quarter: "Q3 2026", valor: 7360356.20, ponderado: 4708678.10, leads: 18 },
+    { quarter: "Q3 2026", valor: 7330356.20, ponderado: 4687678.10, leads: 18 },
     { quarter: "Q4 2026", valor: 2400000.00, ponderado: 1197500.00, leads: 6 }
   ],
   visao2027: {
     entradaGarantida: 3846222.00,
     // Contratos plurianuais que começam em 2027 ainda não têm quebra de valor por ano — usamos o valor total do contrato
-    pipeline2027: { valorTotal: 14860000.00, ponderado: 7400000.00, leads: 6 }
+    pipeline2027: { valorTotal: 14860000.00, ponderado: 7400000.00, leads: 7 }
   }
 };
 
@@ -477,25 +496,6 @@ const fmtCompact = v => (v/1000000).toLocaleString('pt-BR', {maximumFractionDigi
 const pct = (a,b) => Math.round((a/b)*100);
 
 document.getElementById('footer-date').textContent = DATA.geradoEm;
-
-// --- Headline (cover) ---
-const hm = document.getElementById('headline-metric');
-const fat = DATA.panorama.faturamento2026;
-const con = DATA.panorama.contratos2026;
-hm.innerHTML = `
-  <div class="hm-item">
-    <div class="hm-label">Faturamento 2026</div>
-    <div class="hm-value">${pct(fat.realizado, fat.meta)}%<small> da meta</small></div>
-  </div>
-  <div class="hm-item">
-    <div class="hm-label">Contratos assinados 2026</div>
-    <div class="hm-value">${pct(con.realizado, con.meta)}%<small> da meta</small></div>
-  </div>
-  <div class="hm-item">
-    <div class="hm-label">Falta p/ bater meta faturamento</div>
-    <div class="hm-value">${fmtCompact(fat.meta - fat.realizado)}<small> BRL</small></div>
-  </div>
-`;
 
 // --- Panorama cards ---
 const pg = document.getElementById('panorama-grid');
@@ -588,19 +588,48 @@ arcs.forEach((a,i)=>{
   a.addEventListener('mouseleave', ()=>highlightOkr(null));
 });
 
-// --- Frentes (sem meta por área — barra relativa ao maior realizado) ---
+// --- Frentes (agora com meta real por área) ---
 const fl = document.getElementById('frentes-list');
-const maxFrente = Math.max(...DATA.frentes.map(f => f.realizado));
 DATA.frentes.forEach(f => {
-  const p = Math.round((f.realizado/maxFrente)*100);
-  fl.innerHTML += `
+  if (f.meta) {
+    const p = pct(f.realizado, f.meta);
+    const tagClass = p >= 100 ? 'tag-superada' : 'tag-emandamento';
+    fl.innerHTML += `
+      <div class="frente-row">
+        <div class="frente-top">
+          <span class="fn">${f.nome}</span>
+          <span class="fv">${fmt(f.realizado)} / ${fmt(f.meta)} <span class="frente-eff">${f.eficiencia}% repassado</span></span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
+        <div class="frente-entrada"><b>${p}% atingido</b> <span class="meta-tag ${tagClass}">${p>=100?'meta superada':'em andamento'}</span> · Entrada 2027 já visível: <b>${fmt(f.entrada2027)}</b></div>
+      </div>
+    `;
+  } else {
+    fl.innerHTML += `
+      <div class="frente-row">
+        <div class="frente-top">
+          <span class="fn">${f.nome}</span>
+          <span class="fv">${fmt(f.realizado)} <span class="frente-eff">${f.eficiencia}% repassado</span></span>
+        </div>
+        <div class="frente-entrada">Sem meta definida para esta frente</div>
+      </div>
+    `;
+  }
+});
+
+// --- Atingimento de metas por OKR ---
+const okrMetasList = document.getElementById('okr-metas-list');
+DATA.okrMetas.forEach(o => {
+  const p = pct(o.realizado, o.meta);
+  const tagClass = p >= 100 ? 'tag-superada' : 'tag-emandamento';
+  okrMetasList.innerHTML += `
     <div class="frente-row">
       <div class="frente-top">
-        <span class="fn">${f.nome}</span>
-        <span class="fv">${fmt(f.realizado)} <span class="frente-eff">${f.eficiencia}% repassado</span></span>
+        <span class="fn">${o.label}</span>
+        <span class="fv">${fmt(o.realizado)} / ${fmt(o.meta)}</span>
       </div>
-      <div class="bar-track"><div class="bar-fill" data-w="${p}"></div></div>
-      <div class="frente-entrada">Entrada 2027 já visível: <b>${fmt(f.entrada2027)}</b></div>
+      <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
+      <div class="frente-entrada"><b>${p}% atingido</b> <span class="meta-tag ${tagClass}">${p>=100?'meta superada':'em andamento'}</span></div>
     </div>
   `;
 });
@@ -610,7 +639,7 @@ const vintageTotal = DATA.vintage.reduce((s,v)=>s+v.valor, 0);
 const vintageMax = Math.max(...DATA.vintage.map(v=>v.valor));
 const pctNovo = Math.round(DATA.vintage[0].valor/vintageTotal*100);
 document.getElementById('vintage-note').innerHTML =
-  `${pctNovo}% do realizado 2026 vem de contratos assinados este ano; o restante vem de carteira de anos anteriores.`;
+  `<b>${pctNovo}%</b> do realizado 2026 vem de contratos assinados este ano; o restante vem de carteira de anos anteriores.`;
 const vl = document.getElementById('vintage-list');
 DATA.vintage.forEach(v => {
   vl.innerHTML += `
@@ -625,11 +654,15 @@ DATA.vintage.forEach(v => {
 // --- Pipeline / cobertura ---
 const gap2026 = DATA.panorama.faturamento2026.meta - DATA.panorama.faturamento2026.realizado;
 const pipelinePonderado = DATA.pipeline2026.reduce((s,q)=> s + q.ponderado, 0);
+const totalPipelineValor2026 = DATA.pipeline2026.reduce((s,q)=> s + q.valor, 0);
 const cobertura = Math.round((pipelinePonderado/gap2026)*100);
 
 document.getElementById('coverage-banner').innerHTML = `
-  <div class="cb-label">Pipeline ponderado (fatia 2026) disponível frente ao que falta para bater a meta de faturamento 2026</div>
-  <div class="cb-value">${cobertura}% de cobertura</div>
+  <div>
+    <div class="cb-label">Pipeline total em aberto para 2026 (fatia do ano, todos os leads em negociação)</div>
+    <div class="cb-value">${fmt(totalPipelineValor2026)}</div>
+    <div class="cb-sub">Ponderado pela conversão: <b>${fmt(pipelinePonderado)}</b> · gap restante da meta: <b>${fmt(gap2026)}</b></div>
+  </div>
 `;
 
 const qg = document.getElementById('quarter-grid');
@@ -639,7 +672,7 @@ DATA.pipeline2026.forEach(q => {
     <div class="q-card">
       <div class="q-name">${q.quarter} · ${q.leads} leads</div>
       <div class="q-val">${fmt(q.valor)}</div>
-      <div class="q-conv">Ponderado: ${fmt(q.ponderado)} · ${convMedia}% de conversão média</div>
+      <div class="q-conv">Ponderado: <b>${fmt(q.ponderado)}</b> · ${convMedia}% de conversão média</div>
     </div>
   `;
 });
@@ -783,7 +816,7 @@ DATA.concentracao.forEach(c => {
 const instMax = Math.max(...DATA.instituicao.map(i=>i.valor));
 const instMaior = DATA.instituicao[0];
 document.getElementById('instituicao-note').innerHTML =
-  `A entidade "${instMaior.nome}" concentra ${Math.round(instMaior.valor/DATA.totalCarteira2026*100)}% do realizado 2026.`;
+  `A entidade "${instMaior.nome}" concentra <b>${Math.round(instMaior.valor/DATA.totalCarteira2026*100)}%</b> do realizado 2026.`;
 const il = document.getElementById('instituicao-list');
 DATA.instituicao.forEach(i => {
   il.innerHTML += `
@@ -805,6 +838,26 @@ document.getElementById('future-grid').innerHTML = `
     <h3>Pipeline em construção para 2027</h3>
     <div class="fc-val">${fmt(DATA.visao2027.pipeline2027.ponderado)}</div>
     <div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;">Ponderado sobre ${DATA.visao2027.pipeline2027.leads} leads · valor total do contrato (sem quebra por ano em plurianuais)</div>
+  </div>
+`;
+
+// --- Headline do topo (cover) — três sinais que precisam de atenção agora, sem repetir o bloco 01 ---
+const fat = DATA.panorama.faturamento2026;
+document.getElementById('headline-metric').innerHTML = `
+  <div class="hm-item">
+    <div class="hm-label">Faturamento 2026</div>
+    <div class="hm-value">${pct(fat.realizado, fat.meta)}%<small> da meta</small></div>
+    <a href="#sec-panorama" class="hm-detail">Detalhar →</a>
+  </div>
+  <div class="hm-item">
+    <div class="hm-label">Cobertura de pipeline</div>
+    <div class="hm-value">${cobertura}%<small> do gap 2026</small></div>
+    <a href="#sec-pipeline" class="hm-detail">Detalhar →</a>
+  </div>
+  <div class="hm-item">
+    <div class="hm-label">Concentração de carteira</div>
+    <div class="hm-value">${concPct}%<small> nos top 5</small></div>
+    <a href="#sec-concentracao" class="hm-detail">Detalhar →</a>
   </div>
 `;
 
