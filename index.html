@@ -111,6 +111,7 @@
   .p-card h3{font-size:13px; font-weight:500; color:var(--muted); margin-bottom:16px;}
   .p-card .realizado{font-size:24px; font-weight:700; color:var(--ink);}
   .p-card .meta-line{font-size:13px; font-weight:300; color:var(--muted); margin:4px 0 14px;}
+  .p-card .card-note{font-size:11px; font-weight:300; color:var(--muted); margin:-8px 0 14px; line-height:1.4;}
   .bar-track{height:6px; background:#EDECE4; overflow:hidden; margin-bottom:10px; border-radius:3px;}
   .bar-fill{height:100%; background:var(--growth); width:0%; transition:width 1.1s cubic-bezier(.16,1,.3,1); border-radius:3px;}
   .p-card .falta{font-size:13px; font-weight:300;}
@@ -392,7 +393,7 @@ const DATA = {
   geradoEm: "17/07/2026",
   panorama: {
     faturamento2026: { label: "Faturamento esperado 2026", realizado: 19872912.32, meta: 26600000 },
-    contratos2026: { label: "Contratos assinados 2026", realizado: 18443543.92, meta: 7980000 },
+    contratos2026: { label: "Venda nova em 2026", realizado: 14482858.35, meta: 21209946.03, note: "Meta = faturamento esperado 2026 menos a carteira legada (receita de 2026 já garantida por contratos assinados em 2024/2025)" },
     entrada2027: { label: "Entrada 2027 já garantida", realizado: 3846222.00, meta: 34580000 }
   },
   okr: [
@@ -507,6 +508,7 @@ Object.values(DATA.panorama).forEach(item => {
       <h3>${item.label}</h3>
       <div class="realizado">${fmt(item.realizado)}</div>
       <div class="meta-line">Meta: ${fmt(item.meta)}</div>
+      ${item.note ? `<div class="card-note">${item.note}</div>` : ''}
       <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
       <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
     </div>
