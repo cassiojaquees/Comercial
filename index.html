@@ -235,6 +235,7 @@
   .temp-quente{background:var(--gap-bg); color:#B85A1E;}
   .temp-morno{background:#F0EFE8; color:#6F7570;}
   .temp-frio{background:var(--cyan-bg); color:#1D6672;}
+  .temp-semdado{background:#F0EFE8; color:#9A9F97; border:1px dashed #C7CABF;}
 
   /* ===== Seletor de ano + sub-blocos de pipeline ===== */
   .year-toggle{display:flex; gap:8px; margin:24px 0 4px;}
@@ -390,47 +391,46 @@
 // DADOS — este bloco é o único ponto que a automação semanal substitui.
 // ==================================================================
 const DATA = {
-  geradoEm: "17/07/2026",
+  geradoEm: "20/07/2026",
   panorama: {
-    faturamento2026: { label: "Faturamento esperado 2026", realizado: 19872912.32, meta: 26600000 },
-    contratos2026: { label: "Venda nova em 2026", realizado: 14482858.35, meta: 21209946.03, note: "Meta = faturamento esperado 2026 menos a carteira legada (receita de 2026 já garantida por contratos assinados em 2024/2025)" },
+    faturamento2026: { label: "Faturamento esperado 2026", realizado: 19952793.27, meta: 26600000 },
+    contratos2026: { label: "Venda nova em 2026", realizado: 14199184.50, meta: 20846391.23, note: "Meta = faturamento esperado 2026 menos a carteira legada (receita de 2026 já garantida por contratos assinados em 2024/2025)" },
     entrada2027: { label: "Entrada 2027 já garantida", realizado: 3846222.00, meta: 34580000 }
   },
   okr: [
     { label: "Up-sell ou cross-sell", valor: 6560969.78, color: "#1C395C" },
-    { label: "Fidelização", valor: 5174615.14, color: "#41BED0" },
-    { label: "Novos negócios", valor: 4086381.43, color: "#7EBB55" },
+    { label: "Fidelização", valor: 5084615.14, color: "#41BED0" },
+    { label: "Novos negócios", valor: 4475262.38, color: "#7EBB55" },
     { label: "Impacta Mais", valor: 3751945.97, color: "#F78A3C" },
-    { label: "Não classificado", valor: 299000.00, color: "#B8BDB4" }
+    { label: "Não classificado", valor: 80000.00, color: "#B8BDB4" }
   ],
   // Metas de KR por OKR (definidas pelo time comercial) — usadas no sub-bloco de atingimento em 02
   okrMetas: [
-    { label: "Novos negócios", realizado: 4086381.43, meta: 3300000 },
-    { label: "Fidelização", realizado: 5174615.14, meta: 3700000 },
+    { label: "Novos negócios", realizado: 4475262.38, meta: 3300000 },
+    { label: "Fidelização", realizado: 5084615.14, meta: 3700000 },
     { label: "Up-sell ou cross-sell", realizado: 6560969.78, meta: 12000000 }
   ],
   frentes: [
     { nome: "Aceleração da Inovação", realizado: 4094259.90, meta: 4500000, entrada2027: 0, eficiencia: 34.4 },
     { nome: "Inovação em Governo", realizado: 3992391.70, meta: 6800000, entrada2027: 2210359.00, eficiencia: 77.0 },
     { nome: "Fórum Impacta Mais", realizado: 3751945.97, meta: 4000000, entrada2027: 0, eficiencia: 100.0 },
-    { nome: "Salto - Geração de Renda", realizado: 3332481.39, meta: 5500000, entrada2027: 636448.00, eficiencia: 94.4 },
-    { nome: "Ecossistemas e Ativação de Hubs", realizado: 2697418.58, meta: 3500000, entrada2027: 0, eficiencia: 40.0 },
+    { nome: "Salto - Geração de Renda", realizado: 3721362.34, meta: 5500000, entrada2027: 636448.00, eficiencia: 94.7 },
+    { nome: "Ecossistemas e Ativação de Hubs", realizado: 2607418.58, meta: 3500000, entrada2027: 0, eficiencia: 40.0 },
     { nome: "Projeto Personalizado", realizado: 1705414.78, meta: 2300000, entrada2027: 999415.00, eficiencia: 100.0 },
-    { nome: "Não classificado", realizado: 299000.00, meta: null, entrada2027: 0, eficiencia: 100.0 }
+    { nome: "Não classificado", realizado: 80000.00, meta: null, entrada2027: 0, eficiencia: 100.0 }
   ],
   // Ano de assinatura do contrato que originou a receita realizada em 2026 (vintage da carteira)
   vintage: [
-    { ano: "2026", valor: 14482858.35 },
-    { ano: "2025", valor: 2547710.07 },
+    { ano: "2026", valor: 14199184.50 },
+    { ano: "2025", valor: 3001264.87 },
     { ano: "2024", valor: 2129285.99 },
-    { ano: "Sem data preenchida", valor: 713057.91 }
+    { ano: "Sem data preenchida", valor: 623057.91 }
   ],
-  // Entidade jurídica (CNPJ) a que o contrato está atrelado
+  // Entidade jurídica (CNPJ) a que o contrato está atrelado — todas as linhas já vêm preenchidas nesta atualização
   instituicao: [
-    { nome: "Companhia", valor: 13273750.64 },
+    { nome: "Companhia", valor: 13662631.59 },
     { nome: "Associação", valor: 5052969.58 },
     { nome: "Brava", valor: 1213392.10 },
-    { nome: "Não informado", valor: 309000.00 },
     { nome: "Salto", valor: 23800.00 }
   ],
   // "Impacta Mais" (evento de autoria própria, com múltiplos patrocinadores — não um cliente único) aparece como Parceiro no Resumo; excluído do ranking de concentração de clientes
@@ -443,8 +443,9 @@ const DATA = {
   ],
   // Leads individuais do forecast — ordenados por temperatura (quente primeiro) e ponderado
   // Ponderado = Valor 2026 (fatia do ano) x conversão; para leads 2027 sem quebra por ano, usa o valor total do contrato
+  // FEAC e Empreender Clima ainda não têm conversão/quarter/frente preenchidos na planilha — aparecem como "Sem dado", contribuem R$0 aos totais até serem completados
   leads: [
-    { lead:"P4F", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:1820000.00, conversao:0.80, ponderado:728000.00, temperatura:"Quente" },
+    { lead:"P4F", frente:"Aceleração da Inovação", ano:"2026", periodo:"Q3/26", valor:2376500.00, conversao:0.80, ponderado:950600.00, temperatura:"Quente" },
     { lead:"Hydro 2", frente:"Ecossistemas e Ativação de Hubs", ano:"2026", periodo:"Q3/26", valor:6500000.00, conversao:0.70, ponderado:568750.00, temperatura:"Quente" },
     { lead:"AdeSampa", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:1636000.00, conversao:0.50, ponderado:409000.00, temperatura:"Quente" },
     { lead:"Sebrae + MDS", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q3/26", valor:500000.00, conversao:0.80, ponderado:400000.00, temperatura:"Quente" },
@@ -474,12 +475,14 @@ const DATA = {
     { lead:"CEPF - Conservação da Biodiversidade do Cerrado", frente:"Salto - Geração de Renda", ano:"2026", periodo:"Q4/26", valor:225000.00, conversao:0.50, ponderado:112500.00, temperatura:"Morno" },
     { lead:"Catalisa Gov", frente:"Inovação em Governo", ano:"2026", periodo:"Q3/26", valor:140000.00, conversao:0.70, ponderado:98000.00, temperatura:"Morno" },
     { lead:"Intelbras", frente:"Inovação em Governo", ano:"2026", periodo:"Q4/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" },
-    { lead:"Serpro", frente:"Inovação em Governo", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" }
+    { lead:"Serpro", frente:"Inovação em Governo", ano:"2026", periodo:"Q3/26", valor:400000.00, conversao:0.30, ponderado:120000.00, temperatura:"Frio" },
+    { lead:"FEAC", frente:"Não classificado", ano:"2026", periodo:"Sem data", valor:230000.00, conversao:0.00, ponderado:0.00, temperatura:"Sem dado" },
+    { lead:"Empreender Clima", frente:"Não classificado", ano:"Sem dado", periodo:"Sem data", valor:0.00, conversao:0.00, ponderado:0.00, temperatura:"Sem dado" }
   ],
-  totalCarteira2026: 19872912.32,
+  totalCarteira2026: 19952793.27,
   // Pipeline ponderado = Valor 2026 (fatia do ano, não o valor total do contrato) x % de conversão
   pipeline2026: [
-    { quarter: "Q3 2026", valor: 7330356.20, ponderado: 4687678.10, leads: 18 },
+    { quarter: "Q3 2026", valor: 7608606.20, ponderado: 4910278.10, leads: 18 },
     { quarter: "Q4 2026", valor: 2400000.00, ponderado: 1197500.00, leads: 6 }
   ],
   visao2027: {
@@ -680,8 +683,8 @@ DATA.pipeline2026.forEach(q => {
 });
 
 // --- Drill-down de leads individuais (filtro combinado: ano + temperatura) ---
-const tempClass = { "Quente":"temp-quente", "Morno":"temp-morno", "Frio":"temp-frio" };
-const tempOrder = ["Quente","Morno","Frio"];
+const tempClass = { "Quente":"temp-quente", "Morno":"temp-morno", "Frio":"temp-frio", "Sem dado":"temp-semdado" };
+const tempOrder = ["Quente","Morno","Frio","Sem dado"];
 let yearFilter = 'Todos';
 let tempFilter = 'Todos';
 
