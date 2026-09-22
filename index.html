@@ -43,9 +43,16 @@
     padding:64px 0 56px;
     border-bottom:1px solid var(--line);
   }
+  .eyebrow-row{
+    display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap;
+    margin-bottom:18px;
+  }
   .eyebrow{
     font-size:12px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
-    color:var(--gap); margin-bottom:18px;
+    color:var(--gap); margin-bottom:0;
+  }
+  .update-badge{
+    font-size:11px; font-weight:300; color:var(--muted); white-space:nowrap;
   }
   .cover h1{
     font-weight:700; font-size:36px; line-height:1.2; max-width:640px; margin-bottom:14px; color:var(--ink);
@@ -281,7 +288,10 @@
 
 <div class="cover">
   <div class="wrap">
-    <div class="eyebrow">Companhia de Impacto — comercial</div>
+    <div class="eyebrow-row">
+      <div class="eyebrow">Companhia de Impacto — comercial</div>
+      <div class="update-badge" id="update-badge"></div>
+    </div>
     <h1>Panorama de editais e contratos</h1>
     <p class="sub">Leitura executiva da carteira comercial 2026–2027: meta, composição da receita, pipeline e concentração de risco.</p>
     <div class="headline-metric" id="headline-metric"></div>
@@ -429,6 +439,7 @@ function showLoadError(){
 function render(){
 
 document.getElementById('footer-date').textContent = DATA.geradoEm;
+document.getElementById('update-badge').textContent = 'Atualizado em ' + DATA.geradoEm;
 
 // --- Panorama cards ---
 const pg = document.getElementById('panorama-grid');
