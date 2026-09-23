@@ -383,12 +383,14 @@
 
     <section id="sec-2027">
       <div class="section-head"><span class="section-num">06</span><h2>Visão 2027</h2></div>
+      <p class="section-note">Entrada 2027 vem de contratos plurianuais já assinados, não do pipeline de fechamento de 2026 (esse fica no Bloco 04) — por isso a meta do último trimestre aparece aqui.</p>
+      <div class="coverage-banner" id="cobertura2027-banner"></div>
       <div class="future-grid" id="future-grid"></div>
     </section>
 
     <section id="sec-mercado">
       <div class="section-head"><span class="section-num">07</span><h2>Mercado e tipo de contrato</h2></div>
-      <p class="section-note">Classificação por contrato — não por cliente: o mesmo parceiro pode ter contratos em mercados diferentes. Base é o valor total de cada contrato, não a fatia 2026, porque a classificação não muda por ano. Migrado da antiga aba "%Mercado" para colunas do próprio Resumo de projetos; parte da carteira ainda não foi classificada, mostrado abaixo como cobertura, não escondido dos percentuais.</p>
+      <p class="section-note">Como a carteira se distribui por tipo de mercado, tipo de contrato e posição da Companhia (ativa ou passiva). Parte da carteira ainda não foi classificada — a cobertura abaixo mostra quanto.</p>
 
       <div class="coverage-banner" id="mercado-coverage-banner"></div>
 
@@ -475,6 +477,7 @@ Object.values(DATA.panorama).forEach(item => {
       <div class="realizado">${fmt(item.realizado)}</div>
       <div class="meta-line">Meta: ${fmt(item.meta)}</div>
       ${item.note ? `<div class="card-note">${item.note}</div>` : ''}
+      ${item.legado !== undefined ? `<div class="card-note" style="margin-top:-4px;">Carteira legada (contratos assinados antes de 2026): <b style="color:var(--text); font-weight:600;">${fmt(item.legado)}</b> · meta total de faturamento 2026: <b style="color:var(--text); font-weight:600;">${fmt(item.legado + item.meta)}</b></div>` : ''}
       <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
       <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
     </div>
@@ -810,12 +813,21 @@ DATA.instituicao.forEach(i => {
 
 // --- 2027 ---
 const cobertura2027 = DATA.visao2027.coberturaMetaAjustada2027;
+
+if (cobertura2027) {
+  document.getElementById('cobertura2027-banner').innerHTML = `
+    <div>
+      <div class="cb-label">Cobertura da meta ajustada 2027 — ${Math.round(cobertura2027.percentualBase*100)}% da meta de faturamento 2027 (${fmt(cobertura2027.denominador)}) que a Companhia quer já ter garantido antes de janeiro/2027 começar</div>
+      <div class="cb-value">${cobertura2027.cobertura}%</div>
+      <div class="cb-sub">Meta do Q4/26 pra fechar essa cobertura: <b>${fmt(cobertura2027.faltaUltimoQuarter)}</b> em novos contratos com entrada garantida em 2027</div>
+    </div>
+  `;
+}
+
 document.getElementById('future-grid').innerHTML = `
   <div class="future-card">
     <h3>Entrada 2027 já garantida</h3>
     <div class="fc-val">${fmt(DATA.visao2027.entradaGarantida)}</div>
-    ${cobertura2027 ? `<div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;">${cobertura2027.cobertura}% da meta ajustada (${Math.round(cobertura2027.percentualBase*100)}% da meta de faturamento 2027 = ${fmt(cobertura2027.denominador)})</div>
-    <div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:4px;">Meta do Q4/26 pra bater a meta ajustada: <b style="color:var(--text); font-weight:600;">${fmt(cobertura2027.faltaUltimoQuarter)}</b></div>` : ''}
   </div>
   <div class="future-card pipeline">
     <h3>Pipeline em construção para 2027</h3>
