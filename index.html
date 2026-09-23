@@ -109,7 +109,7 @@
   .section-note{color:var(--muted); font-weight:300; font-size:14px; margin:-16px 0 28px 0; max-width:560px;}
 
   /* ===== Panorama cards ===== */
-  .panorama-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;}
+  .panorama-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;}
   .p-card{
     background:var(--paper-2); border:1px solid var(--line); padding:22px;
     transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
@@ -306,6 +306,7 @@
     <a href="#sec-pipeline" data-target="sec-pipeline">04 Pipeline e cobertura</a>
     <a href="#sec-concentracao" data-target="sec-concentracao">05 Concentração</a>
     <a href="#sec-2027" data-target="sec-2027">06 Visão 2027</a>
+    <a href="#sec-mercado" data-target="sec-mercado">07 Mercado e tipo de contrato</a>
   </nav>
 
   <div class="main">
@@ -385,14 +386,36 @@
       <div class="future-grid" id="future-grid"></div>
     </section>
 
-    <!-- Bloco 07 (Mercado e tipo de contrato) pausado a pedido do Rodolfo — retomar quando a aba "Mercado" estiver madura. Ver histórico do git para restaurar. -->
+    <section id="sec-mercado">
+      <div class="section-head"><span class="section-num">07</span><h2>Mercado e tipo de contrato</h2></div>
+      <p class="section-note">Classificação por contrato — não por cliente: o mesmo parceiro pode ter contratos em mercados diferentes. Base é o valor total de cada contrato, não a fatia 2026, porque a classificação não muda por ano. Migrado da antiga aba "%Mercado" para colunas do próprio Resumo de projetos; parte da carteira ainda não foi classificada, mostrado abaixo como cobertura, não escondido dos percentuais.</p>
+
+      <div class="coverage-banner" id="mercado-coverage-banner"></div>
+
+      <div class="subblock" style="margin-top:0; padding-top:0; border-top:none;">
+        <div class="subhead">Por mercado</div>
+        <p class="subhead-note" id="mercado-por-mercado-note"></p>
+        <div id="mercado-por-mercado-list"></div>
+      </div>
+
+      <div class="subblock">
+        <div class="subhead">Por tipo de contrato</div>
+        <div id="mercado-por-tipo-list"></div>
+      </div>
+
+      <div class="subblock">
+        <div class="subhead">Ativo x Passivo</div>
+        <p class="subhead-note">Refere-se à posição da Companhia no contrato (captação ativa vs. resposta a demanda/edital), não à saúde financeira do contrato.</p>
+        <div id="mercado-ativo-passivo-list"></div>
+      </div>
+    </section>
 
   </div>
 </div>
 
 <footer>
   <div class="wrap fline">
-    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos", "Metas" e "Detalhamento" · bloco de Mercado pausado por enquanto · dados atualizados automaticamente a partir da planilha (cache de até 30 min).
+    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos", "Metas" e "Detalhamento" · dados atualizados automaticamente a partir da planilha (cache de até 30 min).
   </div>
 </footer>
 
@@ -457,6 +480,18 @@ Object.values(DATA.panorama).forEach(item => {
     </div>
   `;
 });
+
+// Margem realizada 2026 — card sem meta/barra, é valor calculado (percentual x realizado), não alvo.
+if (DATA.margemRealizada2026) {
+  const mg = DATA.margemRealizada2026;
+  pg.innerHTML += `
+    <div class="p-card">
+      <h3>${mg.label}</h3>
+      <div class="realizado">${fmt(mg.valor)}</div>
+      <div class="card-note" style="margin-top:8px;">${Math.round(mg.percentual*100)}% do faturamento esperado 2026 (${fmt(mg.baseFaturamento)})</div>
+    </div>
+  `;
+}
 
 // --- OKR donut (SVG ring, interactive) ---
 const okrTotal = DATA.okr.reduce((s,o)=>s+o.valor, 0);
@@ -774,10 +809,13 @@ DATA.instituicao.forEach(i => {
 });
 
 // --- 2027 ---
+const cobertura2027 = DATA.visao2027.coberturaMetaAjustada2027;
 document.getElementById('future-grid').innerHTML = `
   <div class="future-card">
     <h3>Entrada 2027 já garantida</h3>
     <div class="fc-val">${fmt(DATA.visao2027.entradaGarantida)}</div>
+    ${cobertura2027 ? `<div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;">${cobertura2027.cobertura}% da meta ajustada (${Math.round(cobertura2027.percentualBase*100)}% da meta de faturamento 2027 = ${fmt(cobertura2027.denominador)})</div>
+    <div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:4px;">Meta do Q4/26 pra bater a meta ajustada: <b style="color:var(--text); font-weight:600;">${fmt(cobertura2027.faltaUltimoQuarter)}</b></div>` : ''}
   </div>
   <div class="future-card pipeline">
     <h3>Pipeline em construção para 2027</h3>
@@ -785,6 +823,45 @@ document.getElementById('future-grid').innerHTML = `
     <div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;">Ponderado sobre ${DATA.visao2027.pipeline2027.leads} leads · valor total do contrato (sem quebra por ano em plurianuais)</div>
   </div>
 `;
+
+// --- Mercado e tipo de contrato (Bloco 07) ---
+if (DATA.mercado) {
+  const mk = DATA.mercado;
+
+  document.getElementById('mercado-coverage-banner').innerHTML = `
+    <div>
+      <div class="cb-label">Cobertura de classificação — % da carteira total (valor de contrato) com Mercado preenchido</div>
+      <div class="cb-value">${mk.coberturaClassificacao}%</div>
+      <div class="cb-sub">Carteira total mapeada: <b>${fmt(mk.totalCarteiraContratos)}</b></div>
+    </div>
+  `;
+
+  function renderDistribuicao(elId, items) {
+    const max = Math.max(...items.map(i => i.valorTotal), 1);
+    const el = document.getElementById(elId);
+    el.innerHTML = '';
+    items.forEach(i => {
+      const naoClassificado = i.nome === 'Não classificado';
+      el.innerHTML += `
+        <div class="conc-row" style="${naoClassificado ? 'opacity:0.6;' : ''}">
+          <div class="cr-name">${i.nome}</div>
+          <div class="cr-bar-track"><div class="cr-bar-fill" data-w="${(i.valorTotal/max)*100}" style="${naoClassificado ? 'background:var(--muted);' : ''}"></div></div>
+          <div class="cr-val">${fmt(i.valorTotal)} <span style="color:var(--muted);">(${i.percentual}% · ${i.numContratos})</span></div>
+        </div>
+      `;
+    });
+    el.querySelectorAll('.cr-bar-fill').forEach(b => { b.style.width = b.dataset.w + '%'; });
+  }
+
+  const topMercado = mk.porMercado.find(m => m.nome !== 'Não classificado');
+  document.getElementById('mercado-por-mercado-note').innerHTML = topMercado
+    ? `<b>${topMercado.nome}</b> é o maior mercado mapeado, com ${topMercado.percentual}% da carteira total.`
+    : '';
+
+  renderDistribuicao('mercado-por-mercado-list', mk.porMercado);
+  renderDistribuicao('mercado-por-tipo-list', mk.porTipoContrato);
+  renderDistribuicao('mercado-ativo-passivo-list', mk.porAtivoPassivo);
+}
 
 // --- Headline do topo (cover) — três sinais que precisam de atenção agora, sem repetir o bloco 01 ---
 const fat = DATA.panorama.faturamento2026;
