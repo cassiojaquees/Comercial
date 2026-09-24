@@ -480,20 +480,40 @@ Object.values(DATA.panorama).forEach(item => {
       ${item.legado !== undefined ? `<div class="card-note" style="margin-top:-4px;">Carteira legada (contratos assinados antes de 2026): <b style="color:var(--text); font-weight:600;">${fmt(item.legado)}</b> · meta total de faturamento 2026: <b style="color:var(--text); font-weight:600;">${fmt(item.legado + item.meta)}</b></div>` : ''}
       <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
       <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
+      ${item.vendidoTotal !== undefined ? `<div class="card-note" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">Valor total vendido em 2026 (contrato cheio, não só a fatia faturada): <b style="color:var(--text); font-weight:600;">${fmt(item.vendidoTotal)}</b></div>` : ''}
     </div>
   `;
 });
 
-// Margem realizada 2026 — card sem meta/barra, é valor calculado (percentual x realizado), não alvo.
-if (DATA.margemRealizada2026) {
-  const mg = DATA.margemRealizada2026;
-  pg.innerHTML += `
-    <div class="p-card">
-      <h3>${mg.label}</h3>
-      <div class="realizado">${fmt(mg.valor)}</div>
-      <div class="card-note" style="margin-top:8px;">${Math.round(mg.percentual*100)}% do faturamento esperado 2026 (${fmt(mg.baseFaturamento)})</div>
-    </div>
-  `;
+// Novos negócios em 2026 — substitui o antigo card de margem. Barra/meta comparam
+// o FATURADO (fatia já reconhecida em 2026); "vendido total" é informativo, não
+// entra na conta de atingimento.
+if (DATA.novosNegocios2026) {
+  const nn = DATA.novosNegocios2026;
+  if (nn.meta) {
+    const p = pct(nn.faturado, nn.meta);
+    const falta = nn.meta - nn.faturado;
+    pg.innerHTML += `
+      <div class="p-card">
+        <h3>${nn.label}</h3>
+        <div class="realizado">${fmt(nn.faturado)}</div>
+        <div class="meta-line">Meta: ${fmt(nn.meta)}</div>
+        <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
+        <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
+        <div class="card-note" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">Valor total vendido em novos negócios: <b style="color:var(--text); font-weight:600;">${fmt(nn.vendidoTotal)}</b></div>
+      </div>
+    `;
+  } else {
+    // Meta de Novos Negócios ainda não cadastrada na aba Metas (categoria OKR).
+    pg.innerHTML += `
+      <div class="p-card">
+        <h3>${nn.label}</h3>
+        <div class="realizado">${fmt(nn.faturado)}</div>
+        <div class="card-note" style="margin-top:8px;">Meta de Novos Negócios ainda não cadastrada na aba Metas.</div>
+        <div class="card-note" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">Valor total vendido em novos negócios: <b style="color:var(--text); font-weight:600;">${fmt(nn.vendidoTotal)}</b></div>
+      </div>
+    `;
+  }
 }
 
 // --- OKR donut (SVG ring, interactive) ---
