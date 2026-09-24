@@ -125,6 +125,12 @@
   .p-card .falta .tag{
     display:inline-block; font-size:12px; font-weight:500; padding:2px 7px; background:var(--gap-bg); color:var(--gap); margin-left:6px;
   }
+  .stat-pair{display:flex; gap:28px; flex-wrap:wrap; margin-bottom:14px;}
+  .stat-block .stat-label{
+    font-size:11px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); margin-bottom:4px;
+  }
+  .stat-block .stat-value-lg{font-size:24px; font-weight:700; color:var(--ink);}
+  .stat-block .stat-value-sm{font-size:18px; font-weight:600; color:var(--text);}
 
   /* ===== OKR donut (SVG) ===== */
   .okr-layout{display:flex; gap:44px; align-items:center; flex-wrap:wrap;}
@@ -468,26 +474,54 @@ document.getElementById('update-badge').textContent = 'Atualizado em ' + DATA.ge
 
 // --- Panorama cards ---
 const pg = document.getElementById('panorama-grid');
-Object.values(DATA.panorama).forEach(item => {
+const panoramaOrder = ['faturamento2026', 'contratos2026', 'entrada2027'];
+
+panoramaOrder.forEach(key => {
+  const item = DATA.panorama[key];
+  if (!item) return;
   const p = pct(item.realizado, item.meta);
   const falta = item.meta - item.realizado;
-  pg.innerHTML += `
-    <div class="p-card">
-      <h3>${item.label}</h3>
-      <div class="realizado">${fmt(item.realizado)}</div>
-      <div class="meta-line">Meta: ${fmt(item.meta)}</div>
-      ${item.note ? `<div class="card-note">${item.note}</div>` : ''}
-      ${item.legado !== undefined ? `<div class="card-note" style="margin-top:-4px;">Carteira legada (contratos assinados antes de 2026): <b style="color:var(--text); font-weight:600;">${fmt(item.legado)}</b> · meta total de faturamento 2026: <b style="color:var(--text); font-weight:600;">${fmt(item.legado + item.meta)}</b></div>` : ''}
-      <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
-      <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
-      ${item.vendidoTotal !== undefined ? `<div class="card-note" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">Valor total vendido em 2026 (contrato cheio, não só a fatia faturada): <b style="color:var(--text); font-weight:600;">${fmt(item.vendidoTotal)}</b></div>` : ''}
-    </div>
-  `;
+
+  if (key === 'contratos2026') {
+    // Venda nova em 2026 — dois números lado a lado: vendido (contrato cheio, o
+    // que o Rodolfo pediu em destaque) e faturado (fatia já reconhecida, é o
+    // que a barra/meta comparam). Legado e meta total viram nota de rodapé.
+    pg.innerHTML += `
+      <div class="p-card">
+        <h3>${item.label}</h3>
+        <div class="stat-pair">
+          <div class="stat-block">
+            <div class="stat-label">Vendido (contrato total)</div>
+            <div class="stat-value-lg">${fmt(item.vendidoTotal)}</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Faturado em 2026</div>
+            <div class="stat-value-sm">${fmt(item.realizado)}</div>
+          </div>
+        </div>
+        <div class="meta-line">Meta de faturamento (venda nova): ${fmt(item.meta)}</div>
+        <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
+        <div class="falta">${p}% da meta faturado <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
+        <div class="card-note" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">Carteira legada (contratos assinados antes de 2026): <b style="color:var(--text); font-weight:600;">${fmt(item.legado)}</b> · meta total de faturamento 2026: <b style="color:var(--text); font-weight:600;">${fmt(item.legado + item.meta)}</b></div>
+      </div>
+    `;
+  } else {
+    pg.innerHTML += `
+      <div class="p-card">
+        <h3>${item.label}</h3>
+        <div class="realizado">${fmt(item.realizado)}</div>
+        <div class="meta-line">Meta: ${fmt(item.meta)}</div>
+        ${item.note ? `<div class="card-note">${item.note}</div>` : ''}
+        <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
+        <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
+      </div>
+    `;
+  }
 });
 
 // Novos negócios em 2026 — substitui o antigo card de margem. Barra/meta comparam
-// o FATURADO (fatia já reconhecida em 2026); "vendido total" é informativo, não
-// entra na conta de atingimento.
+// o FATURADO (fatia já reconhecida em 2026); "vendido total" aparece ao lado,
+// como número secundário, não entra na conta de atingimento.
 if (DATA.novosNegocios2026) {
   const nn = DATA.novosNegocios2026;
   if (nn.meta) {
@@ -496,11 +530,19 @@ if (DATA.novosNegocios2026) {
     pg.innerHTML += `
       <div class="p-card">
         <h3>${nn.label}</h3>
-        <div class="realizado">${fmt(nn.faturado)}</div>
+        <div class="stat-pair">
+          <div class="stat-block">
+            <div class="stat-label">Faturado em 2026</div>
+            <div class="stat-value-lg">${fmt(nn.faturado)}</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Vendido (contrato total)</div>
+            <div class="stat-value-sm">${fmt(nn.vendidoTotal)}</div>
+          </div>
+        </div>
         <div class="meta-line">Meta: ${fmt(nn.meta)}</div>
         <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
         <div class="falta">${p}% atingido <span class="tag">faltam ${fmt(Math.max(falta,0))}</span></div>
-        <div class="card-note" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">Valor total vendido em novos negócios: <b style="color:var(--text); font-weight:600;">${fmt(nn.vendidoTotal)}</b></div>
       </div>
     `;
   } else {
@@ -508,9 +550,17 @@ if (DATA.novosNegocios2026) {
     pg.innerHTML += `
       <div class="p-card">
         <h3>${nn.label}</h3>
-        <div class="realizado">${fmt(nn.faturado)}</div>
-        <div class="card-note" style="margin-top:8px;">Meta de Novos Negócios ainda não cadastrada na aba Metas.</div>
-        <div class="card-note" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">Valor total vendido em novos negócios: <b style="color:var(--text); font-weight:600;">${fmt(nn.vendidoTotal)}</b></div>
+        <div class="stat-pair">
+          <div class="stat-block">
+            <div class="stat-label">Faturado em 2026</div>
+            <div class="stat-value-lg">${fmt(nn.faturado)}</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Vendido (contrato total)</div>
+            <div class="stat-value-sm">${fmt(nn.vendidoTotal)}</div>
+          </div>
+        </div>
+        <div class="card-note">Meta de Novos Negócios ainda não cadastrada na aba Metas.</div>
       </div>
     `;
   }
