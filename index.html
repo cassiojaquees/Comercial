@@ -185,6 +185,9 @@
 
   /* ===== 2027 ===== */
   .future-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .future-grid.three{grid-template-columns:repeat(auto-fit, minmax(220px,1fr));}
+  .future-card .fc-sub{font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;}
+  .future-card .fc-sub b{color:var(--ink); font-weight:600;}
   .future-card{background:var(--growth-bg); padding:22px; border-left:3px solid var(--growth); transition: transform .2s ease, box-shadow .2s ease;}
   .future-card:hover{transform:translateY(-3px); box-shadow:0 10px 28px rgba(28,57,92,0.07);}
   .future-card.pipeline{background:var(--gap-bg); border-left-color:var(--gap);}
@@ -353,14 +356,20 @@
       <div class="coverage-banner" id="coverage-banner"></div>
       <div class="quarter-grid" id="quarter-grid"></div>
 
+      <div class="subhead" style="margin-top:32px;">Olhando para 2027</div>
+      <p class="subhead-note" id="pipeline2027-note"></p>
+      <div class="future-grid three" id="pipeline2027-grid"></div>
+
+      <div class="subhead" style="margin-top:32px;">Forecast dos leads</div>
+      <p class="subhead-note">Forecast = valor do contrato × probabilidade de conversão, calculado na planilha. Considera o contrato inteiro, então pode incluir parcelas de 2026 e de 2027; por isso o total não bate com o pipeline de 2026 do topo. O filtro de ano usa o ano do lead.</p>
       <div class="year-toggle" id="year-toggle"></div>
       <div class="pipeline-subgrid">
         <div>
-          <div class="subhead">Pipeline ponderado por frente</div>
+          <div class="subhead">Forecast por frente</div>
           <div id="frente-pipeline-list"></div>
         </div>
         <div>
-          <div class="subhead">Pipeline ponderado por temperatura</div>
+          <div class="subhead">Forecast por temperatura</div>
           <div class="temp-stats" id="temp-stats"></div>
         </div>
       </div>
@@ -730,10 +739,47 @@ DATA.pipeline2026.forEach(q => {
   `;
 });
 
+// --- Olhando para 2027 (dentro do Bloco 04) ---
+(function(){
+  const v27 = DATA.visao2027;
+  const c27 = v27.coberturaMetaAjustada2027;
+  const entrada = v27.entradaGarantida || 0;
+  const pond27 = v27.pipeline2027.ponderado || 0;
+  const meta27Total = DATA.panorama.entrada2027 ? DATA.panorama.entrada2027.meta : null;
+  const metaJan = c27 ? c27.denominador : null;
+  const somaCobertura = entrada + pond27;
+
+  document.getElementById('pipeline2027-note').innerHTML =
+    'Quanto já entrou para 2027, quanto o pipeline pode render e a meta que a Companhia quer ter garantida em janeiro/27.';
+
+  const cards = [`
+    <div class="future-card">
+      <h3>Já entrou para 2027</h3>
+      <div class="fc-val">${fmt(entrada)}</div>
+      <div class="fc-sub">Entrada garantida em contratos assinados</div>
+    </div>`, `
+    <div class="future-card pipeline">
+      <h3>Pipeline 2027 ponderado</h3>
+      <div class="fc-val">${fmt(pond27)}</div>
+      <div class="fc-sub">${v27.pipeline2027.leads} leads · fatia de 2027 × probabilidade de conversão</div>
+    </div>`];
+
+  if (metaJan !== null) {
+    const pct = metaJan > 0 ? Math.round((somaCobertura/metaJan)*100) : 0;
+    cards.push(`
+    <div class="future-card">
+      <h3>Meta prevista para janeiro/27</h3>
+      <div class="fc-val">${fmt(metaJan)}</div>
+      <div class="fc-sub">${Math.round(c27.percentualBase*100)}% da meta de faturamento 2027${meta27Total ? ' (' + fmt(meta27Total) + ')' : ''}. Entrada + pipeline ponderado somam <b>${fmt(somaCobertura)}</b> (${pct}% dessa meta).</div>
+    </div>`);
+  }
+  document.getElementById('pipeline2027-grid').innerHTML = cards.join('');
+})();
+
 // --- Drill-down de leads individuais (filtro combinado: ano + temperatura) ---
 const tempClass = { "Quente":"temp-quente", "Morno":"temp-morno", "Frio":"temp-frio", "Sem dado":"temp-semdado" };
 const tempOrder = ["Quente","Morno","Frio","Sem dado"];
-let yearFilter = 'Todos';
+let yearFilter = '2026';
 let tempFilter = 'Todos';
 
 function leadsFiltered(){
@@ -748,7 +794,7 @@ function renderLeadsTable(){
   const table = document.getElementById('leads-table');
   let html = `
     <div class="lead-row head">
-      <div>Lead</div><div>Frente</div><div>Período</div><div>Valor</div><div>Conversão</div><div>Ponderado 2026</div><div>Temperatura</div>
+      <div>Lead</div><div>Frente</div><div>Período</div><div>Valor</div><div>Conversão</div><div>Forecast</div><div>Temperatura</div>
     </div>
   `;
   list.forEach(l => {
@@ -812,7 +858,7 @@ function refreshPipelineViews(){
 const yearToggleEl = document.getElementById('year-toggle');
 ['Todos','2026','2027'].forEach(y => {
   const chip = document.createElement('button');
-  chip.className = 'filter-chip' + (y==='Todos' ? ' active' : '');
+  chip.className = 'filter-chip' + (y===yearFilter ? ' active' : '');
   chip.textContent = y==='Todos' ? 'Todos os anos' : y;
   chip.addEventListener('click', ()=>{
     yearFilter = y;
