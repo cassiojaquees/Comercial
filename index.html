@@ -185,9 +185,19 @@
 
   /* ===== 2027 ===== */
   .future-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
-  .future-grid.three{grid-template-columns:repeat(auto-fit, minmax(220px,1fr));}
-  .future-card .fc-sub{font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;}
-  .future-card .fc-sub b{color:var(--ink); font-weight:600;}
+  /* Construindo 2027: barra empilhada garantido + pipeline vs meta de janeiro/27 */
+  .stack-wrap{margin-bottom:8px;}
+  .stack-track{position:relative; display:flex; height:16px; background:#EDECE4; border-radius:8px; margin:26px 0 22px;}
+  .stack-seg{height:100%; transition:width 1.1s cubic-bezier(.16,1,.3,1);}
+  .stack-seg.seg-gar{background:var(--growth); border-radius:8px 0 0 8px;}
+  .stack-seg.seg-pipe{background:var(--gap);}
+  .stack-marker{position:absolute; top:-6px; bottom:-6px; width:2px; background:var(--ink); transform:translateX(-1px);}
+  .stack-marker span{position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:3px; font-size:11px; font-weight:500; color:var(--ink); white-space:nowrap;}
+  .stack-legend{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px;}
+  .sl-label{display:flex; align-items:center; gap:7px; font-size:12px; font-weight:500; color:var(--text-2); margin-bottom:6px;}
+  .sl-dot{width:9px; height:9px; border-radius:2px; flex-shrink:0;}
+  .sl-val{font-size:22px; font-weight:700; color:var(--ink);}
+  .sl-sub{font-size:11px; font-weight:300; color:var(--muted); margin-top:4px;}
   .future-card{background:var(--growth-bg); padding:22px; border-left:3px solid var(--growth); transition: transform .2s ease, box-shadow .2s ease;}
   .future-card:hover{transform:translateY(-3px); box-shadow:0 10px 28px rgba(28,57,92,0.07);}
   .future-card.pipeline{background:var(--gap-bg); border-left-color:var(--gap);}
@@ -314,8 +324,7 @@
     <a href="#sec-frentes" data-target="sec-frentes">03 Frentes de trabalho</a>
     <a href="#sec-pipeline" data-target="sec-pipeline">04 Pipeline e cobertura</a>
     <a href="#sec-concentracao" data-target="sec-concentracao">05 Concentração</a>
-    <a href="#sec-2027" data-target="sec-2027">06 Visão 2027</a>
-    <a href="#sec-mercado" data-target="sec-mercado">07 Mercado e tipo de contrato</a>
+    <a href="#sec-mercado" data-target="sec-mercado">06 Mercado e tipo de contrato</a>
   </nav>
 
   <div class="main">
@@ -352,13 +361,14 @@
 
     <section id="sec-pipeline">
       <div class="section-head"><span class="section-num">04</span><h2>Pipeline e cobertura da meta</h2></div>
-      <p class="section-note">Pipeline ponderado considera apenas a fatia de cada contrato que entra em 2026 — contratos plurianuais contam só a parcela do ano corrente, não o valor total do contrato pelo ciclo de vida inteiro.</p>
+      <p class="section-note">Primeiro, o que falta para fechar 2026; depois, como está a construção de 2027. O pipeline ponderado de cada ano considera só a fatia do contrato que cai naquele ano — contratos plurianuais não contam pelo valor total.</p>
       <div class="coverage-banner" id="coverage-banner"></div>
       <div class="quarter-grid" id="quarter-grid"></div>
 
-      <div class="subhead" style="margin-top:32px;">Olhando para 2027</div>
+      <div class="subhead" style="margin-top:40px; font-size:15px;">Construindo 2027</div>
       <p class="subhead-note" id="pipeline2027-note"></p>
-      <div class="future-grid three" id="pipeline2027-grid"></div>
+      <div class="coverage-banner" id="cobertura2027-banner"></div>
+      <div id="pipeline2027-stack"></div>
 
       <div class="subhead" style="margin-top:32px;">Forecast dos leads</div>
       <p class="subhead-note">Forecast = valor do contrato × probabilidade de conversão, calculado na planilha. Considera o contrato inteiro, então pode incluir parcelas de 2026 e de 2027; por isso o total não bate com o pipeline de 2026 do topo. O filtro de ano usa o ano do lead.</p>
@@ -396,15 +406,8 @@
       </div>
     </section>
 
-    <section id="sec-2027">
-      <div class="section-head"><span class="section-num">06</span><h2>Visão 2027</h2></div>
-      <p class="section-note">Entrada 2027 vem de contratos plurianuais já assinados, não do pipeline de fechamento de 2026 (esse fica no Bloco 04) — por isso a meta do último trimestre aparece aqui.</p>
-      <div class="coverage-banner" id="cobertura2027-banner"></div>
-      <div class="future-grid" id="future-grid"></div>
-    </section>
-
     <section id="sec-mercado">
-      <div class="section-head"><span class="section-num">07</span><h2>Mercado e tipo de contrato</h2></div>
+      <div class="section-head"><span class="section-num">06</span><h2>Mercado e tipo de contrato</h2></div>
       <p class="section-note">Como a carteira se distribui por tipo de mercado, tipo de contrato e posição da Companhia (ativa ou passiva). Parte da carteira ainda não foi classificada — a cobertura abaixo mostra quanto.</p>
 
       <div class="coverage-banner" id="mercado-coverage-banner"></div>
@@ -739,41 +742,63 @@ DATA.pipeline2026.forEach(q => {
   `;
 });
 
-// --- Olhando para 2027 (dentro do Bloco 04) ---
+// --- Construindo 2027 (Bloco 04): meta de janeiro/27, o que já entrou e o pipeline ponderado, numa leitura só ---
 (function(){
   const v27 = DATA.visao2027;
   const c27 = v27.coberturaMetaAjustada2027;
   const entrada = v27.entradaGarantida || 0;
   const pond27 = v27.pipeline2027.ponderado || 0;
+  const nLeads27 = v27.pipeline2027.leads || 0;
   const meta27Total = DATA.panorama.entrada2027 ? DATA.panorama.entrada2027.meta : null;
-  const metaJan = c27 ? c27.denominador : null;
-  const somaCobertura = entrada + pond27;
+  const metaJan = c27 ? c27.denominador : 0;
+  const soma = entrada + pond27;
 
   document.getElementById('pipeline2027-note').innerHTML =
-    'Quanto já entrou para 2027, quanto o pipeline pode render e a meta que a Companhia quer ter garantida em janeiro/27.';
+    'A meta de janeiro/27 é a parte da meta de 2027 que a Companhia quer ter garantida em contratos antes do ano começar. Em verde, o que já entrou; em laranja, o que o pipeline pode somar.';
 
-  const cards = [`
-    <div class="future-card">
-      <h3>Já entrou para 2027</h3>
-      <div class="fc-val">${fmt(entrada)}</div>
-      <div class="fc-sub">Entrada garantida em contratos assinados</div>
-    </div>`, `
-    <div class="future-card pipeline">
-      <h3>Pipeline 2027 ponderado</h3>
-      <div class="fc-val">${fmt(pond27)}</div>
-      <div class="fc-sub">${v27.pipeline2027.leads} leads · fatia de 2027 × probabilidade de conversão</div>
-    </div>`];
-
-  if (metaJan !== null) {
-    const pct = metaJan > 0 ? Math.round((somaCobertura/metaJan)*100) : 0;
-    cards.push(`
-    <div class="future-card">
-      <h3>Meta prevista para janeiro/27</h3>
-      <div class="fc-val">${fmt(metaJan)}</div>
-      <div class="fc-sub">${Math.round(c27.percentualBase*100)}% da meta de faturamento 2027${meta27Total ? ' (' + fmt(meta27Total) + ')' : ''}. Entrada + pipeline ponderado somam <b>${fmt(somaCobertura)}</b> (${pct}% dessa meta).</div>
-    </div>`);
+  if (c27) {
+    document.getElementById('cobertura2027-banner').innerHTML = `
+      <div>
+        <div class="cb-label">Meta de janeiro/27 — ${Math.round(c27.percentualBase*100)}% da meta de faturamento 2027${meta27Total ? ' (' + fmt(meta27Total) + ')' : ''}</div>
+        <div class="cb-value">${fmt(metaJan)}</div>
+        <div class="cb-sub">Já garantido: <b>${c27.cobertura}%</b> · meta do Q4/26 para fechar a diferença: <b>${fmt(c27.faltaUltimoQuarter)}</b> em novos contratos com entrada em 2027</div>
+      </div>
+    `;
   }
-  document.getElementById('pipeline2027-grid').innerHTML = cards.join('');
+
+  // Barra empilhada: garantido + pipeline ponderado, com o marcador da meta.
+  const escala = Math.max(metaJan, soma, 1);
+  const wGar = Math.min(entrada/escala*100, 100);
+  const wPipe = Math.min(pond27/escala*100, 100 - wGar);
+  const posMeta = metaJan/escala*100;
+  const pctSoma = metaJan > 0 ? Math.round(soma/metaJan*100) : 0;
+
+  document.getElementById('pipeline2027-stack').innerHTML = `
+    <div class="stack-wrap">
+      <div class="stack-track">
+        <div class="stack-seg seg-gar" style="width:${wGar}%"></div>
+        <div class="stack-seg seg-pipe" style="width:${wPipe}%"></div>
+        ${metaJan > 0 ? `<div class="stack-marker" style="left:${posMeta}%"><span>Meta jan/27</span></div>` : ''}
+      </div>
+      <div class="stack-legend">
+        <div class="sl-item">
+          <div class="sl-label"><span class="sl-dot" style="background:var(--growth)"></span>Já entrou para 2027</div>
+          <div class="sl-val">${fmt(entrada)}</div>
+          <div class="sl-sub">Entrada garantida em contratos assinados</div>
+        </div>
+        <div class="sl-item">
+          <div class="sl-label"><span class="sl-dot" style="background:var(--gap)"></span>Pipeline 2027 ponderado</div>
+          <div class="sl-val">${fmt(pond27)}</div>
+          <div class="sl-sub">${nLeads27} leads · fatia de 2027 × probabilidade de conversão</div>
+        </div>
+        <div class="sl-item">
+          <div class="sl-label"><span class="sl-dot" style="background:var(--ink)"></span>Garantido + pipeline</div>
+          <div class="sl-val">${fmt(soma)}</div>
+          <div class="sl-sub">${pctSoma}% da meta de janeiro/27</div>
+        </div>
+      </div>
+    </div>
+  `;
 })();
 
 // --- Drill-down de leads individuais (filtro combinado: ano + temperatura) ---
@@ -926,31 +951,6 @@ DATA.instituicao.forEach(i => {
     </div>
   `;
 });
-
-// --- 2027 ---
-const cobertura2027 = DATA.visao2027.coberturaMetaAjustada2027;
-
-if (cobertura2027) {
-  document.getElementById('cobertura2027-banner').innerHTML = `
-    <div>
-      <div class="cb-label">Cobertura da meta ajustada 2027 — ${Math.round(cobertura2027.percentualBase*100)}% da meta de faturamento 2027 (${fmt(cobertura2027.denominador)}) que a Companhia quer já ter garantido antes de janeiro/2027 começar</div>
-      <div class="cb-value">${cobertura2027.cobertura}%</div>
-      <div class="cb-sub">Meta do Q4/26 pra fechar essa cobertura: <b>${fmt(cobertura2027.faltaUltimoQuarter)}</b> em novos contratos com entrada garantida em 2027</div>
-    </div>
-  `;
-}
-
-document.getElementById('future-grid').innerHTML = `
-  <div class="future-card">
-    <h3>Entrada 2027 já garantida</h3>
-    <div class="fc-val">${fmt(DATA.visao2027.entradaGarantida)}</div>
-  </div>
-  <div class="future-card pipeline">
-    <h3>Pipeline em construção para 2027</h3>
-    <div class="fc-val">${fmt(DATA.visao2027.pipeline2027.ponderado)}</div>
-    <div style="font-size:11px; font-weight:300; color:var(--muted); margin-top:6px;">Ponderado sobre ${DATA.visao2027.pipeline2027.leads} leads · fatia de 2027 dos contratos × probabilidade de conversão</div>
-  </div>
-`;
 
 // --- Mercado e tipo de contrato (Bloco 07) ---
 if (DATA.mercado) {
