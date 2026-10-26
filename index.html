@@ -839,7 +839,8 @@ function renderLeadsTable(){
 }
 
 function renderFrentePipeline(){
-  const list = yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter);
+  // Leads encerrados (Status Ganho/Declinado, ativo:false) ficam fora dos totais.
+  const list = (yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter)).filter(l=>l.ativo!==false);
   const byFrente = {};
   list.forEach(l => { byFrente[l.frente] = (byFrente[l.frente]||0) + l.ponderado; });
   const entries = Object.entries(byFrente).sort((a,b)=>b[1]-a[1]);
@@ -859,7 +860,8 @@ function renderFrentePipeline(){
 }
 
 function renderTempStats(){
-  const list = yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter);
+  // Leads encerrados (Status Ganho/Declinado, ativo:false) ficam fora dos totais.
+  const list = (yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter)).filter(l=>l.ativo!==false);
   const el = document.getElementById('temp-stats');
   el.innerHTML = '';
   tempOrder.forEach(t => {
