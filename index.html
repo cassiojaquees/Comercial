@@ -336,7 +336,7 @@
 
     <section id="sec-composicao">
       <div class="section-head"><span class="section-num">02</span><h2>Composição da receita</h2></div>
-      <p class="section-note">De onde vem o realizado de 2026 — quanto é expansão de carteira existente e quanto é motor de crescimento novo. Passe o mouse sobre o anel ou sobre um item da lista para destacar.</p>
+      <p class="section-note">De onde vem o realizado de 2026: expansão da carteira existente ou crescimento novo.</p>
       <div class="okr-layout">
         <svg class="donut-svg" id="okr-donut" width="200" height="200" viewBox="0 0 180 180"></svg>
         <div class="okr-legend" id="okr-legend"></div>
@@ -348,20 +348,20 @@
       </div>
       <div class="subblock">
         <div class="subhead">Atingimento de metas por OKR</div>
-        <p class="subhead-note">KRs definidos pelo time comercial para cada motor de crescimento. Impacta Mais e itens não classificados ainda não têm meta de OKR própria.</p>
+        <p class="subhead-note">KRs definidos pelo time comercial para cada motor de crescimento. Impacta Mais e itens não classificados ainda não têm meta de OKR própria. Novos negócios inclui contratos de qualquer ano de assinatura; o card “Novos negócios em 2026” considera só os assinados em 2026.</p>
         <div id="okr-metas-list"></div>
       </div>
     </section>
 
     <section id="sec-frentes">
       <div class="section-head"><span class="section-num">03</span><h2>Desempenho por frente de trabalho</h2></div>
-      <p class="section-note">Realizado 2026 frente à meta de cada frente de trabalho, com a entrada de 2027 já visível como indicador de continuidade e a eficiência de repasse (quanto do valor do contrato vira receita da empresa).</p>
+      <p class="section-note">Realizado 2026 contra a meta de cada frente. “Já garantido para 2027” mostra a continuidade; “repassado” é quanto do valor do contrato vira receita da Companhia.</p>
       <div id="frentes-list"></div>
     </section>
 
     <section id="sec-pipeline">
       <div class="section-head"><span class="section-num">04</span><h2>Pipeline e cobertura da meta</h2></div>
-      <p class="section-note">Primeiro, o que falta para fechar 2026; depois, como está a construção de 2027. O pipeline ponderado de cada ano considera só a fatia do contrato que cai naquele ano — contratos plurianuais não contam pelo valor total.</p>
+      <p class="section-note">Primeiro o que falta para 2026, depois a construção de 2027. Cada ano conta só a parte do contrato desembolsada nele.</p>
       <div class="coverage-banner" id="coverage-banner"></div>
       <div class="quarter-grid" id="quarter-grid"></div>
 
@@ -371,7 +371,7 @@
       <div id="pipeline2027-stack"></div>
 
       <div class="subhead" style="margin-top:32px;">Forecast dos leads</div>
-      <p class="subhead-note">Forecast = valor do contrato × probabilidade de conversão, calculado na planilha. Considera o contrato inteiro, então pode incluir parcelas de 2026 e de 2027; por isso o total não bate com o pipeline de 2026 do topo. O filtro de ano usa o ano do lead.</p>
+      <p class="subhead-note">Previsão de desembolso (2026 + 2027) × probabilidade de conversão. O filtro de ano usa o ano de fechamento do lead. Leads ganhos ou declinados ficam fora dos totais.</p>
       <div class="year-toggle" id="year-toggle"></div>
       <div class="pipeline-subgrid">
         <div>
@@ -408,7 +408,7 @@
 
     <section id="sec-mercado">
       <div class="section-head"><span class="section-num">06</span><h2>Mercado e tipo de contrato</h2></div>
-      <p class="section-note">Como a carteira se distribui por tipo de mercado, tipo de contrato e posição da Companhia (ativa ou passiva). Parte da carteira ainda não foi classificada — a cobertura abaixo mostra quanto.</p>
+      <p class="section-note">Carteira por mercado, tipo de contrato e posição da Companhia (ativo, passivo ou renovação). A cobertura abaixo mostra quanto já foi classificado.</p>
 
       <div class="coverage-banner" id="mercado-coverage-banner"></div>
 
@@ -425,7 +425,7 @@
 
       <div class="subblock">
         <div class="subhead">Ativo x Passivo</div>
-        <p class="subhead-note">Refere-se à posição da Companhia no contrato (captação ativa vs. resposta a demanda/edital), não à saúde financeira do contrato.</p>
+        <p class="subhead-note">Posição da Companhia no contrato: ativo (captação ativa), passivo (resposta a demanda ou edital) ou renovação. Não mede a saúde financeira do contrato.</p>
         <div id="mercado-ativo-passivo-list"></div>
       </div>
     </section>
@@ -435,7 +435,7 @@
 
 <footer>
   <div class="wrap fline">
-    Relatório gerado em <span id="footer-date"></span> a partir das abas "Resumo de projetos", "Metas" e "Detalhamento" · dados atualizados automaticamente a partir da planilha (cache de até 30 min).
+    Atualizado em <span id="footer-date"></span>, a partir da planilha comercial. Os dados atualizam sozinhos, com até 30 min de defasagem.
   </div>
 </footer>
 
@@ -452,6 +452,7 @@ let DATA = null;
 
 // --- Helpers de formatação (não dependem de DATA) ---
 const fmt = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+const fmtPct = v => Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
 const fmtCompact = v => (v/1000000).toLocaleString('pt-BR', {maximumFractionDigits: 1}) + 'M';
 const pct = (a,b) => Math.round((a/b)*100);
 
@@ -663,10 +664,10 @@ DATA.frentes.forEach(f => {
       <div class="frente-row">
         <div class="frente-top">
           <span class="fn">${f.nome}</span>
-          <span class="fv">${fmt(f.realizado)} / ${fmt(f.meta)} <span class="frente-eff">${f.eficiencia}% repassado</span></span>
+          <span class="fv">${fmt(f.realizado)} / ${fmt(f.meta)} <span class="frente-eff">${fmtPct(f.eficiencia)}% repassado</span></span>
         </div>
         <div class="bar-track"><div class="bar-fill" data-w="${Math.min(p,100)}"></div></div>
-        <div class="frente-entrada"><b>${p}% atingido</b> <span class="meta-tag ${tagClass}">${p>=100?'meta superada':'em andamento'}</span> · Entrada 2027 já visível: <b>${fmt(f.entrada2027)}</b></div>
+        <div class="frente-entrada"><b>${p}% atingido</b> <span class="meta-tag ${tagClass}">${p>=100?'meta superada':'em andamento'}</span> · Já garantido para 2027: <b>${fmt(f.entrada2027)}</b></div>
       </div>
     `;
   } else {
@@ -674,7 +675,7 @@ DATA.frentes.forEach(f => {
       <div class="frente-row">
         <div class="frente-top">
           <span class="fn">${f.nome}</span>
-          <span class="fv">${fmt(f.realizado)} <span class="frente-eff">${f.eficiencia}% repassado</span></span>
+          <span class="fv">${fmt(f.realizado)} <span class="frente-eff">${fmtPct(f.eficiencia)}% repassado</span></span>
         </div>
         <div class="frente-entrada">Sem meta definida para esta frente</div>
       </div>
@@ -704,7 +705,7 @@ const vintageTotal = DATA.vintage.reduce((s,v)=>s+v.valor, 0);
 const vintageMax = Math.max(...DATA.vintage.map(v=>v.valor));
 const pctNovo = Math.round(DATA.vintage[0].valor/vintageTotal*100);
 document.getElementById('vintage-note').innerHTML =
-  `<b>${pctNovo}%</b> do realizado 2026 vem de contratos assinados este ano; o restante vem de carteira de anos anteriores.`;
+  `<b>${pctNovo}%</b> do realizado 2026 vem de contratos assinados em 2026; o resto, de anos anteriores.`;
 const vl = document.getElementById('vintage-list');
 DATA.vintage.forEach(v => {
   vl.innerHTML += `
@@ -724,9 +725,9 @@ const cobertura = Math.round((pipelinePonderado/gap2026)*100);
 
 document.getElementById('coverage-banner').innerHTML = `
   <div>
-    <div class="cb-label">Pipeline total em aberto para 2026 (fatia do ano, todos os leads em negociação)</div>
+    <div class="cb-label">Pipeline em aberto para 2026 (parte desembolsada em 2026)</div>
     <div class="cb-value">${fmt(totalPipelineValor2026)}</div>
-    <div class="cb-sub">Ponderado pela conversão: <b>${fmt(pipelinePonderado)}</b> · gap restante da meta: <b>${fmt(gap2026)}</b></div>
+    <div class="cb-sub">Ponderado: <b>${fmt(pipelinePonderado)}</b> · gap da meta: <b>${fmt(gap2026)}</b></div>
   </div>
 `;
 
@@ -754,14 +755,14 @@ DATA.pipeline2026.forEach(q => {
   const soma = entrada + pond27;
 
   document.getElementById('pipeline2027-note').innerHTML =
-    'A meta de janeiro/27 é a parte da meta de 2027 que a Companhia quer ter garantida em contratos antes do ano começar. Em verde, o que já entrou; em laranja, o que o pipeline pode somar.';
+    'Meta de jan/27: parte da meta de 2027 que a Companhia quer ter contratada antes do ano começar.';
 
   if (c27) {
     document.getElementById('cobertura2027-banner').innerHTML = `
       <div>
         <div class="cb-label">Meta de janeiro/27 — ${Math.round(c27.percentualBase*100)}% da meta de faturamento 2027${meta27Total ? ' (' + fmt(meta27Total) + ')' : ''}</div>
         <div class="cb-value">${fmt(metaJan)}</div>
-        <div class="cb-sub">Já garantido: <b>${c27.cobertura}%</b> · meta do Q4/26 para fechar a diferença: <b>${fmt(c27.faltaUltimoQuarter)}</b> em novos contratos com entrada em 2027</div>
+        <div class="cb-sub">Já garantido: <b>${fmtPct(c27.cobertura)}%</b> · faltam <b>${fmt(c27.faltaUltimoQuarter)}</b> em novos contratos com entrada em 2027 (meta do Q4/26)</div>
       </div>
     `;
   }
@@ -782,7 +783,7 @@ DATA.pipeline2026.forEach(q => {
       </div>
       <div class="stack-legend">
         <div class="sl-item">
-          <div class="sl-label"><span class="sl-dot" style="background:var(--growth)"></span>Já entrou para 2027</div>
+          <div class="sl-label"><span class="sl-dot" style="background:var(--growth)"></span>Já garantido para 2027</div>
           <div class="sl-val">${fmt(entrada)}</div>
           <div class="sl-sub">Entrada garantida em contratos assinados</div>
         </div>
@@ -960,8 +961,8 @@ if (DATA.mercado) {
 
   document.getElementById('mercado-coverage-banner').innerHTML = `
     <div>
-      <div class="cb-label">Cobertura de classificação — % da carteira total (valor de contrato) com Mercado preenchido</div>
-      <div class="cb-value">${mk.coberturaClassificacao}%</div>
+      <div class="cb-label">Carteira com Mercado classificado (% do valor total dos contratos)</div>
+      <div class="cb-value">${fmtPct(mk.coberturaClassificacao)}%</div>
       <div class="cb-sub">Carteira total mapeada: <b>${fmt(mk.totalCarteiraContratos)}</b></div>
     </div>
   `;
@@ -976,7 +977,7 @@ if (DATA.mercado) {
         <div class="conc-row" style="${naoClassificado ? 'opacity:0.6;' : ''}">
           <div class="cr-name">${i.nome}</div>
           <div class="cr-bar-track"><div class="cr-bar-fill" data-w="${(i.valorTotal/max)*100}" style="${naoClassificado ? 'background:var(--muted);' : ''}"></div></div>
-          <div class="cr-val">${fmt(i.valorTotal)} <span style="color:var(--muted);">(${i.percentual}% · ${i.numContratos})</span></div>
+          <div class="cr-val">${fmt(i.valorTotal)} <span style="color:var(--muted);">(${fmtPct(i.percentual)}% · ${i.numContratos})</span></div>
         </div>
       `;
     });
@@ -985,7 +986,7 @@ if (DATA.mercado) {
 
   const topMercado = mk.porMercado.find(m => m.nome !== 'Não classificado');
   document.getElementById('mercado-por-mercado-note').innerHTML = topMercado
-    ? `<b>${topMercado.nome}</b> é o maior mercado mapeado, com ${topMercado.percentual}% da carteira total.`
+    ? `<b>${topMercado.nome}</b> é o maior mercado mapeado, com ${fmtPct(topMercado.percentual)}% da carteira total.`
     : '';
 
   renderDistribuicao('mercado-por-mercado-list', mk.porMercado);
@@ -1002,7 +1003,7 @@ document.getElementById('headline-metric').innerHTML = `
     <a href="#sec-panorama" class="hm-detail">Detalhar →</a>
   </div>
   <div class="hm-item">
-    <div class="hm-label">Cobertura de pipeline</div>
+    <div class="hm-label">Cobertura de pipeline (ponderado)</div>
     <div class="hm-value">${cobertura}%<small> do gap 2026</small></div>
     <a href="#sec-pipeline" class="hm-detail">Detalhar →</a>
   </div>
