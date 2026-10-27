@@ -840,8 +840,8 @@ function renderLeadsTable(){
 }
 
 function renderFrentePipeline(){
-  // Leads encerrados (Status Ganho/Declinado, ativo:false) ficam fora dos totais.
-  const list = (yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter)).filter(l=>l.ativo!==false);
+  // Ficam fora dos totais: leads encerrados (Status Ganho/Declinado, ativo:false) e leads sem previsão (Forecast 2026 + 2027 = 0).
+  const list = (yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter)).filter(l=>l.ativo!==false && l.ponderado>0);
   const byFrente = {};
   list.forEach(l => { byFrente[l.frente] = (byFrente[l.frente]||0) + l.ponderado; });
   const entries = Object.entries(byFrente).sort((a,b)=>b[1]-a[1]);
@@ -861,8 +861,8 @@ function renderFrentePipeline(){
 }
 
 function renderTempStats(){
-  // Leads encerrados (Status Ganho/Declinado, ativo:false) ficam fora dos totais.
-  const list = (yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter)).filter(l=>l.ativo!==false);
+  // Ficam fora dos totais: leads encerrados (Status Ganho/Declinado, ativo:false) e leads sem previsão (Forecast 2026 + 2027 = 0).
+  const list = (yearFilter==='Todos' ? DATA.leads : DATA.leads.filter(l=>l.ano===yearFilter)).filter(l=>l.ativo!==false && l.ponderado>0);
   const el = document.getElementById('temp-stats');
   el.innerHTML = '';
   tempOrder.forEach(t => {
